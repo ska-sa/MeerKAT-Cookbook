@@ -4,6 +4,7 @@ clean:
 
 clobber: clean
 	rm -rf *.ms
+	rm -rf *flux *image *psf *residual *model 
 	rm -rf *.ms.*
 
 # -fin-
