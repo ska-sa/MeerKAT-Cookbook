@@ -9,8 +9,7 @@ Newer data is stored in a more flexible format, and data is accessed and process
 New MeerKAT data format is called MeerKAT Visibility Format (MVF)
 
 Cheat sheets and quick introduction usage examples for
-`[archive](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/archive)`
-[Archive](https://github.com/rubyvanrooyen/MeerKAT-Cookbook/tree/master/archive)
+[archive](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/archive)
 
 
 ## KATDAL
@@ -22,9 +21,8 @@ pip search katdal
 katdal (0.13)  - Karoo Array Telescope data access library for interacting with data sets in the MeerKAT Visibility Format (MVF)
 ```
 
-Introductory Jupyter notebooks illustrating some example data interaction and inspection using `katdal`
+Introductory Jupyter notebooks illustrating some example data interaction and inspection using 
 [katdal](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/katdal)
-[Katdal](https://github.com/rubyvanrooyen/MeerKAT-Cookbook/tree/master/katdal)
 
 
 ## CASA
