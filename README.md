@@ -8,8 +8,8 @@ These files are to big for standard io-operations.
 Newer data is stored in a more flexible format, and data is accessed and processed as needed.    
 New MeerKAT data format is called MeerKAT Visibility Format (MVF)
 
-Cheat sheets and quick introduction usage examples    
-[archive](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/archive)
+Cheat sheets and quick introduction usage examples for
+`[archive](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/archive)`
 [Archive](https://github.com/rubyvanrooyen/MeerKAT-Cookbook/tree/master/archive)
 
 
