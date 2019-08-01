@@ -1,5 +1,5 @@
 # MeerKAT-Cookbook
-Recipies for MeerKAT data interaction and processing
+Recipes for MeerKAT data interaction and processing
 
 
 ## Data archive
@@ -8,20 +8,25 @@ These files are to big for standard io-operations.
 Newer data is stored in a more flexible format, and data is accessed and processed as needed.    
 New MeerKAT data format is called MeerKAT Visibility Format (MVF)
 
-Cheat sheet recipies and quick introduction usage examples    
-[Archive](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/archive)
+Cheat sheets and quick introduction usage examples    
+[archive](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/archive)
 [Archive](https://github.com/rubyvanrooyen/MeerKAT-Cookbook/tree/master/archive)
+
 
 ## KATDAL
 Interacting with any of the MeerKAT observation files is made easy by the `katdal` python library   
-https://github.com/ska-sa/katdal
+[katdal repository](https://github.com/ska-sa/katdal)
 
 ```
 pip search katdal
 katdal (0.13)  - Karoo Array Telescope data access library for interacting with data sets in the MeerKAT Visibility Format (MVF)
 ```
 
+Introductory Jupyter notebooks illustrating some example data interaction and inspection using `katdal`
+[katdal](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/katdal)
+[Katdal](https://github.com/rubyvanrooyen/MeerKAT-Cookbook/tree/master/katdal)
+
 
 ## CASA
 
- fin-
+ -fin-
