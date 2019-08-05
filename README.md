@@ -1,5 +1,8 @@
 # MeerKAT-Cookbook
 Recipes for MeerKAT data interaction and processing
+* Accessing the data via the MeerKAT data archive
+* Inspecting the data using the MeerKAT `katdal` software interface
+* CASA recipes for processing MeerKAT data
 
 
 ## Data archive
