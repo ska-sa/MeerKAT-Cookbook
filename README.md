@@ -6,28 +6,38 @@ Recipes for MeerKAT data interaction and processing
 
 
 ## Data archive
-Older MeerKAT files are still HDF5 format, but the data rates from radio telescopes are now so large that combining data into single files cause sizes of Giga- to Tera bytes.
+MeerKAT data files are large and combining the data for an observation using the full array into single files cause sizes of Giga- to Tera bytes.
 These files are to big for standard io-operations.     
-Newer data is stored in a more flexible format, and data is accessed and processed as needed.    
-New MeerKAT data format is called MeerKAT Visibility Format (MVF)
+MeerKAT data is stored in a flexible format called MeerKAT Visibility Format (MVF), and data is accessed and processed as needed.    
+
+All MeerKAT data is accessed via the [SARAO archive](https://archive.sarao.ac.za/)     
+User guideline to register, access and retrieve data from the archive are provided through the [Archive Interface User Guide](https://archive.sarao.ac.za/statics/Archive_Interface_User_Guide.pdf)
 
 Cheat sheets and quick introduction usage examples for
 [archive](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/archive)
 
 
+**Add workbook for MS creation from archive as soon as option is completed and tested**
+Contrast with commandline instruction (hopefully with calibration option) shown in CASA recipe section
+
+
 ## KATDAL
 Interacting with any of the MeerKAT observation files is made easy by the `katdal` python library   
 [katdal repository](https://github.com/ska-sa/katdal)
-
+Open source library available from PyPI
 ```
 pip search katdal
 katdal (0.13)  - Karoo Array Telescope data access library for interacting with data sets in the MeerKAT Visibility Format (MVF)
 ```
+Detail `katdal` documentation with user guide instructions can be found on the [katdal's documentation](https://katdal.readthedocs.io/en/latest/index.html) page
 
+`katdal` is specifically developed to allow efficient access to MeerKAT Visibility Format (MVF). It is fully integrated to access data via the `kat archive` line, optimised for large file data access and memory usage. 
 Introductory Jupyter notebooks illustrating some example data interaction and inspection using 
 [katdal](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/katdal)
 
 
 ## CASA
+`katdal` provides a script to convert these data sets to CASA MeasurementSets.
+
 
  -fin-
