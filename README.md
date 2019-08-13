@@ -11,12 +11,12 @@ MeerKAT data is stored in a flexible format called MeerKAT Visibility Format (MV
 User guideline to register, access and retrieve data from the archive are provided through the      
 [Archive Interface User Guide](https://archive.sarao.ac.za/statics/Archive_Interface_User_Guide.pdf)
 
+Some introduction usage example notebooks can be found in 
+[archive](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/archive)
+
 **Note to reader**    
 MeerKAT data files are large and combining the data for an observation using the full array into single files cause sizes of Giga- to Tera bytes.
 These files are to big for standard io-operations.     
-
-Some introduction usage example notebooks can be found in 
-[archive](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/archive)
 
 **TODO**
 * Add workbook for MS creation from archive as soon as option is completed and tested.
