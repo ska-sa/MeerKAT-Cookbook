@@ -5,19 +5,21 @@ Recipes for MeerKAT data interaction and processing
 * CASA recipes for processing MeerKAT data
 
 
-## Data archive
+## ARCHIVE
+All MeerKAT data is accessed via the [SARAO archive](https://archive.sarao.ac.za/)     
+MeerKAT data is stored in a flexible format called MeerKAT Visibility Format (MVF), and data is accessed and processed as needed.    
+User guideline to register, access and retrieve data from the archive are provided through the      
+[Archive Interface User Guide](https://archive.sarao.ac.za/statics/Archive_Interface_User_Guide.pdf)
+
+**Note to reader**    
 MeerKAT data files are large and combining the data for an observation using the full array into single files cause sizes of Giga- to Tera bytes.
 These files are to big for standard io-operations.     
-MeerKAT data is stored in a flexible format called MeerKAT Visibility Format (MVF), and data is accessed and processed as needed.    
 
-All MeerKAT data is accessed via the [SARAO archive](https://archive.sarao.ac.za/)     
-User guideline to register, access and retrieve data from the archive are provided through the [Archive Interface User Guide](https://archive.sarao.ac.za/statics/Archive_Interface_User_Guide.pdf)
-
-Cheat sheets and quick introduction usage examples for
+Some introduction usage example notebooks can be found in 
 [archive](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/archive)
 
-
-**Add workbook for MS creation from archive as soon as option is completed and tested**
+**TODO**
+* Add workbook for MS creation from archive as soon as option is completed and tested.
 Contrast with commandline instruction (hopefully with calibration option) shown in CASA recipe section
 
 
