@@ -42,4 +42,7 @@ Introductory Jupyter notebooks illustrating some example data interaction and in
 `katdal` provides a script to convert these data sets to CASA MeasurementSets.
 
 
+## UTILS
+An assortment of helper scripts to assist the astronomer
+
  -fin-
