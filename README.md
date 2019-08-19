@@ -5,6 +5,7 @@ Recipes for MeerKAT data interaction and processing
 ## ARCHIVE
 MeerKAT data is stored in a flexible format called MeerKAT Visibility Format (MVF), and accessed/processed as needed.    
 All MeerKAT data is accessed via the [SARAO archive](https://archive.sarao.ac.za/)     
+
 **Important Notes**:
 * MeerKAT archive is access restricted, requiring registration and login
 * To access data in the MeerKAT archive a **token** is required.
