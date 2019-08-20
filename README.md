@@ -20,9 +20,12 @@ Some introduction usage example notebooks can be found in
 MeerKAT data files are large and combining the data for an observation using the full array into single files cause sizes of Giga- to Tera bytes.
 These files are to big for standard io-operations.     
 
+CASA MeasurementSet data tables can be created using a convenient helper script `mvftoms.py` available from `katdal` installation.     
+Measurement sets can be downloaded directly from the MeerKAT archive using some sensible defaults when created.     
+Examples on how to create measurement sets from a user control environment using tokens from the archive are given in example notebooks in the archive folder.
+
 **TODO**
-* Add workbook for MS creation from archive as soon as option is completed and tested.
-Contrast with commandline instruction (hopefully with calibration option) shown in CASA recipe section
+* Contrast with commandline instruction (hopefully with calibration option) shown in CASA recipe section
 
 
 ## KATDAL
@@ -40,7 +43,8 @@ pip install katdal
 
 Detail `katdal` documentation with user guide instructions can be found on the [katdal's documentation](https://katdal.readthedocs.io/en/latest/index.html) page
 
-`katdal` is specifically developed to allow efficient access to MeerKAT Visibility Format (MVF). It is fully integrated to access data via the `kat archive` line, optimised for large file data access and memory usage. 
+`katdal` is specifically developed to allow efficient access to MeerKAT Visibility Format (MVF).
+It is fully integrated to access data via the `katarchive` line, optimised for large file data access and memory usage. 
 Introductory Jupyter notebooks illustrating some example data interaction and inspection using 
 [katdal](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/katdal)
 
