@@ -32,12 +32,24 @@ Open source library available from PyPI
 ```
 pip search katdal
 katdal (0.13)  - Karoo Array Telescope data access library for interacting with data sets in the MeerKAT Visibility Format (MVF)
+```    
+Easy install     
 ```
+pip install katdal
+```
+
 Detail `katdal` documentation with user guide instructions can be found on the [katdal's documentation](https://katdal.readthedocs.io/en/latest/index.html) page
 
 `katdal` is specifically developed to allow efficient access to MeerKAT Visibility Format (MVF). It is fully integrated to access data via the `kat archive` line, optimised for large file data access and memory usage. 
 Introductory Jupyter notebooks illustrating some example data interaction and inspection using 
 [katdal](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/katdal)
+
+Cutting edge functionality can be obtained by installing `katdal` directly from the GitHub repository    
+```
+pip install git+https://github.com/ska-sa/katdal.git
+```
+**Import Note**
+Care should be taken since installing the master from GitHub might not be as stable as PyPI.
 
 
 ## CASA
