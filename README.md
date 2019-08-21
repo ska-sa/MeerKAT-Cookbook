@@ -2,11 +2,11 @@
 Recipes for MeerKAT data interaction and processing
 
 MeerKAT data is stored in a flexible format called MeerKAT Visibility Format (MVF), and accessed/processed as needed.    
+Easy access and software specifically developed to handle MeerKAT large data sizes are provided through the MeerKAT archive and `katdal` packages.
+
 **Note to reader**    
 MeerKAT data files are large and combining the data for an observation using the full array into single files cause sizes of Giga- to Tera bytes.
 These files are to big for standard io-operations.     
-
-Easy access and software specifically developed to handle MeerKAT large data sizes are provided through the MeerKAT archive and `katdal` packages.
 
 
 ## ARCHIVE
