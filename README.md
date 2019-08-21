@@ -1,31 +1,33 @@
 # MeerKAT-Cookbook
 Recipes for MeerKAT data interaction and processing
 
-
-## ARCHIVE
 MeerKAT data is stored in a flexible format called MeerKAT Visibility Format (MVF), and accessed/processed as needed.    
-All MeerKAT data is accessed via the [SARAO archive](https://archive.sarao.ac.za/)     
-
-**Important Notes**:
-* MeerKAT archive is access restricted, requiring registration and login
-* To access data in the MeerKAT archive a **token** is required.
-
-User guideline to register, access and retrieve data from the archive are provided in the
-[Archive Interface User Guide](https://archive.sarao.ac.za/statics/Archive_Interface_User_Guide.pdf)
-
-Some introduction usage example notebooks can be found in 
-[archive](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/archive)
-
 **Note to reader**    
 MeerKAT data files are large and combining the data for an observation using the full array into single files cause sizes of Giga- to Tera bytes.
 These files are to big for standard io-operations.     
 
-CASA MeasurementSet data tables can be created using a convenient helper script `mvftoms.py` available from `katdal` installation.     
-Measurement sets can be downloaded directly from the MeerKAT archive using some sensible defaults when created.     
-Examples on how to create measurement sets from a user control environment using tokens from the archive are given in example notebooks in the archive folder.
+Easy access and software specifically developed to handle MeerKAT large data sizes are provided through the MeerKAT archive and `katdal` packages.
 
-**TODO**
-* Contrast with commandline instruction (hopefully with calibration option) shown in CASA recipe section
+
+## ARCHIVE
+All MeerKAT data is accessed via the [SARAO archive](https://archive.sarao.ac.za/)     
+**Important Notes**:
+* MeerKAT archive is access restricted, requiring registration and login
+* To access data in the MeerKAT archive a **token** is required.
+
+
+User guideline to register, access and retrieve data from the archive are provided in the
+[Archive Interface User Guide](https://archive.sarao.ac.za/statics/Archive_Interface_User_Guide.pdf)
+
+Example notebooks showing data interaction and extraction methods can be found in 
+[archive](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/archive)
+* Using tokens for `katdal` processing:
+[Accessing MeerKAT observation data](https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/archive/Accessing%20MeerKAT%20observation%20data.ipynb)
+* Using tokens to convert MVF files to CASA MeasurementSet:
+[Convert MVF dataset(s) to MeasurementSet](https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/archive/Convert%20MVF%20dataset(s)%20to%20MeasurementSet.ipynb)
+
+If you are following standard interferometric imaging data reduction using CASA measurement sets, you can also use the direct download link to create and download a measurement set instead.    
+See [Archive Interface User Guide](https://archive.sarao.ac.za/statics/Archive_Interface_User_Guide.pdf) for detail.
 
 
 ## KATDAL
@@ -41,7 +43,8 @@ Easy install
 pip install katdal
 ```
 
-Detail `katdal` documentation with user guide instructions can be found on the [katdal's documentation](https://katdal.readthedocs.io/en/latest/index.html) page
+Detail `katdal` documentation with user guide instructions can be found on the
+[katdal's documentation](https://katdal.readthedocs.io/en/latest/index.html) page
 
 `katdal` is specifically developed to allow efficient access to MeerKAT Visibility Format (MVF).
 It is fully integrated to access data via the `katarchive` line, optimised for large file data access and memory usage. 
@@ -57,6 +60,13 @@ Care should be taken since installing the master from GitHub might not be as sta
 
 
 ## CASA
+CASA MeasurementSet data tables can be created using a convenient helper script `mvftoms.py` available from `katdal` installation.     
+Measurement sets can be downloaded directly from the MeerKAT archive using some sensible defaults when created.     
+Examples on how to create measurement sets from a user control environment using tokens from the archive are given in example notebooks in the archive folder.
+
+**TODO**
+* Contrast with commandline instruction (hopefully with calibration option) shown in CASA recipe section
+
 `katdal` provides a script to convert these data sets to CASA MeasurementSets.
 
 
