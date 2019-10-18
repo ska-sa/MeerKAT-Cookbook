@@ -34,7 +34,7 @@ def print_msg(msg):
 
 
 def cli():
-    usage = "%%prog [options]"
+    usage = "%%prog [options] --msfile <filename.ms> -f <J...>"
     description = 'antenna based calibration corrections'
 
     parser = argparse.ArgumentParser(
@@ -50,29 +50,27 @@ def cli():
             required=True,
             help='filename of measurement set',
             )
-    group.add_argument(
-            '-r', '--ref-ant',
-            type=str,
-            required=True,
-            help='reference antenna full name, m0xx',
-            )
-    group.add_argument(
-            '-t', '--target',
-            type=str,
-            required=True,
-            help='comma separated list of observation target(s)',
-            )
-    group.add_argument(
-            '-g', '--gain',
-            type=str,
-            help='comma separated list of gain calibrator(s)',
-            )
     flux_cals = ['J0408-6545', 'J1939-6342', 'J1331+3030']
     group.add_argument(
             '-f', '--flux',
             type=str,
             required=True,
             help='comma separated list of flux calibrator(s) from list: {}'.format(flux_cals),
+            )
+    group.add_argument(
+            '-g', '--gain',
+            type=str,
+            help='comma separated list of gain calibrator(s)',
+            )
+    group.add_argument(
+            '-t', '--target',
+            type=str,
+            help='comma separated list of observation target(s)',
+            )
+    group.add_argument(
+            '-r', '--ref-ant',
+            type=str,
+            help='reference antenna full name, m0xx',
             )
     group = parser.add_argument_group(
             title="additional optional arguments",
@@ -88,13 +86,6 @@ def cli():
             help='recalculates (u, v, w) and or phase centre',
             )
     group.add_argument(
-            '--setjy',
-            type=str,
-            choices=flux_cals,
-            metavar='flux_cal',
-            help='specific flux calibrator when more than one is used in the observation, picked from list: {}'.format(flux_cals),
-            )
-    group.add_argument(
             '-b', '--bandpass',
             type=str,
             help='comma separated list of bandpass calibrator(s)',
@@ -104,11 +95,6 @@ def cli():
             type=str,
             default='',
             help='channels to use for preliminary gain calibration, \'spw:start_chan,end_chan\'',
-            )
-    group.add_argument(
-            '--applycal',
-            action='store_true',
-            help='applycal on interim solutions',
             )
     parser.add_argument(
             '-v', '--verbose',
@@ -122,20 +108,16 @@ def cli():
         args.prefix = os.path.splitext(os.path.basename(args.msfile))[0]
     if args.bandpass is None:
         args.bandpass = args.flux
-    if args.setjy is None:
-        args.setjy = args.flux
 
     return args
 
 
 def primary_calibrators(msfile,
-                        ref_ant,
                         f_cal,
                         b_cal,
+                        ref_ant,
                         prelim_gcal=False,
                         ref_chans='',
-                        verbose=False,
-                        interimcal=False,
                         ):
 
     gaintable_list=['']
@@ -175,6 +157,9 @@ def primary_calibrators(msfile,
             gaintable=gaintable_list)
     gaintable_list.append(ktable)
 
+    prim_cals = b_cal.split(',') + f_cal.split(',')
+    prim_cals = list(set(prim_cals))
+
     print_msg('Doing bandpass calibration')
     btable = msfile + '.B'
     if os.access(btable, F_OK):
@@ -182,7 +167,7 @@ def primary_calibrators(msfile,
         rmtables(btable)
     bandpass(vis=msfile,
              caltable=btable,
-             field=b_cal,
+             field=prim_cals,
              bandtype='B',
              solint='inf',
              refant=ref_ant,
@@ -191,20 +176,14 @@ def primary_calibrators(msfile,
              minsnr=3.0,
              gaintable=gaintable_list)
 
-    if interimcal:
-        applycal(vis=msfile,
-                 gaintable=[btable, ktable],
-                 calwt=False,
-                 applymode='calflag')
-
-    print_msg('Gain calibration on fluxscale calibrator')
+    print_msg('Gain calibration for primary calibrators')
     gtable = msfile + '.G'
     if os.access(gtable, F_OK):
         print('Deleting gain table before gaincal\n')
         rmtables(gtable)
     gaincal(vis=msfile,
             caltable=gtable,
-            field=f_cal,
+            field=prim_cals,
             gaintype='G',
             calmode='ap',
             solint='int',
@@ -214,84 +193,39 @@ def primary_calibrators(msfile,
             minsnr=1.0,
             gaintable=[btable, ktable])
 
-    if verbose:
-        # Plotcal does not release table lock, so can't append to caltable.
-        # Make plots as the last thing.
-        plotcal(caltable=gtable0,
-                xaxis='time',
-                yaxis='phase',
-                showgui=False,
-                plotrange=[-1, -1, -180, 180],
-                figfile=gtable0 + '_phase.png'
-                )
-        plotcal(caltable=ktable,
-                xaxis='antenna',
-                yaxis='delay')
-        plotcal(caltable=btable,
-                xaxis='chan',
-                yaxis='phase',
-                showgui=False,
-                plotrange=[-1, -1, -180, 180],
-                figfile=btable + '_phase.png'
-                )
-        plotcal(caltable=btable,
-                xaxis='chan',
-                yaxis='amp',
-                showgui=False,
-                figfile=btable + '_amp.png'
-                )
-        plotcal(caltable=gtable,
-                field=f_cal,
-                xaxis='time',
-                yaxis='phase',
-                showgui=False,
-                plotrange=[-1, -1, -180, 180],
-                figfile=f_cal + '_phase.png'
-                )
-        plotcal(caltable=gtable,
-                field=f_cal,
-                xaxis='time',
-                yaxis='amp',
-                showgui=False,
-                plotrange=[-1, -1, -180, 180],
-                figfile=f_cal + '_amp.png'
-                )
-
     return [ktable, btable, gtable]
 
+
 def secondary_calibrators(msfile,
-                          ref_ant,
                           f_cal,
                           b_cal,
                           g_cal,
                           ktable,
                           btable,
                           gtable,
+                          ref_ant,
                           ref_chans='',
                           avg_time='int',
-                          verbose=False,
                           ):
+
+    print_msg('Gain calibration for secondary calibrators')
+    gaincal(vis=msfile,
+            caltable=gtable,
+            field=g_cal,
+            gaintype='G',
+            calmode='ap',
+            solint=avg_time,
+            refant=ref_ant,
+            combine='scan',
+            solnorm=False,
+            minsnr=1.0,
+            append=True,
+            gaintable=[btable, ktable])
 
     cals = b_cal.split(',') + g_cal.split(',')
     cals = list(set(cals))
     for cal in f_cal.split(','):
         cals.remove(cal)
-    print_msg('Gain calibration for secondary cal')
-    for cal in cals:
-        print('calibrating field {}'.format(cal))
-        gaincal(vis=msfile,
-                caltable=gtable,
-                field=cal,
-                gaintype='G',
-                calmode='ap',
-                solint=avg_time,
-                refant=ref_ant,
-                combine='scan',
-                solnorm=False,
-                minsnr=1.0,
-                append=True,
-                gaintable=[btable, ktable])
-
     print_msg('Fluxscale calibration for secondary cal')
     ftable = msfile + '.flux'
     if os.access(ftable, F_OK):
@@ -303,101 +237,124 @@ def secondary_calibrators(msfile,
               reference=f_cal,
               transfer=','.join(cals))
 
-    if verbose:
-        # Plotcal does not release table lock, so can't append to caltable.
-        # Make plots as the last thing.
-        for cal in cals:
-            plotcal(caltable=gtable,
-                    field=cal,
-                    xaxis='time',
-                    yaxis='phase',
-                    showgui=False,
-                    plotrange=[-1, -1, -180, 180],
-                    figfile=cal + '_phase.png'
-                    )
-            plotcal(caltable=gtable,
-                    field=cal,
-                    xaxis='time',
-                    yaxis='amp',
-                    showgui=False,
-                    plotrange=[-1, -1, -180, 180],
-                    figfile=cal + '_amp.png'
-                    )
-
     return ftable
 
+
 def calibrate(msfile,
-              ref_ant,
               f_cal,
               b_cal,
               g_cal,
-              setjy_cal=None,
+              ref_ant,
               standard=None,
               prelim_gcal=False,
               ref_chans='',
               avg_time='int',
-              verbose=False,
-              interimcal=False,
               ):
 
     clearcal(msfile)
 
     # To convert correlation coefficients to absolute flux densities
     print_msg('Setting fluxes on flux calibrator')
-    if setjy_cal is None:
-        setjy_cal=f_cal.split(',')[0]
     if standard is None:
-        standard=flux_calibrators[setjy_cal]
+        standard=flux_calibrators[f_cal]
     if type(standard) is list:
         setjy(vis=msfile,
-              field=setjy_cal,
+              field=f_cal,
               scalebychan=True,
               standard='manual',
               fluxdensity=standard)
     else:
         setjy(vis=msfile,
-              field=setjy_cal,
+              field=f_cal,
               scalebychan=True,
               standard=standard,
               fluxdensity=-1)
 
     [ktable, btable, gtable] = primary_calibrators(msfile,
-                                                   ref_ant,
                                                    f_cal,
                                                    b_cal,
+                                                   ref_ant,
                                                    prelim_gcal=prelim_gcal,
                                                    ref_chans=ref_chans,
-                                                   verbose=verbose,
-                                                   interimcal=interimcal,
                                                    )
-
-    if interimcal:
-        clearstat()
-        applycal(vis=msfile,
-                 gaintable=[gtable, btable, ktable],
-                 gainfield=[f_cal, b_cal, f_cal],
-                 interp=['', 'nearest', ''],
-                 calwt=False,
-                 applymode='calflag')
 
     if g_cal is not None:
         ftable = secondary_calibrators(msfile,
-                                       ref_ant,
                                        f_cal,
                                        b_cal,
                                        g_cal,
                                        ktable,
                                        btable,
                                        gtable,
+                                       ref_ant,
                                        ref_chans='',
                                        avg_time='int',
-                                       verbose=False,
                                        )
     clearstat()
     applycal(vis=msfile,
              gaintable=[ftable, btable, ktable],
              interp=['', 'nearest', ''],
              applymode='calflag')
+
+
+# Plotcal does not release table lock, so can't append to caltable.
+# Make plots as the last thing.
+def show_cal_solutions(f_cal,
+                       b_cal,
+                       g_cal,
+                       ktable,
+                       btable,
+                       gtable,
+                       ):
+    plotcal(caltable=ktable,
+            xaxis='antenna',
+            yaxis='delay')
+    plotcal(caltable=btable,
+            xaxis='chan',
+            yaxis='phase',
+            showgui=False,
+            plotrange=[-1, -1, -180, 180],
+            figfile=btable + '_phase.png'
+            )
+    plotcal(caltable=btable,
+            xaxis='chan',
+            yaxis='amp',
+            showgui=False,
+            figfile=btable + '_amp.png'
+            )
+    plotcal(caltable=gtable,
+            field=b_cal,
+            xaxis='time',
+            yaxis='phase',
+            showgui=False,
+            plotrange=[-1, -1, -180, 180],
+            figfile=b_cal + '_phase.png'
+            )
+    plotcal(caltable=gtable,
+            field=b_cal,
+            xaxis='time',
+            yaxis='amp',
+            showgui=False,
+            plotrange=[-1, -1, -180, 180],
+            figfile=b_cal + '_amp.png'
+            )
+    plotcal(caltable=gtable,
+            field=g_cal,
+            xaxis='time',
+            yaxis='phase',
+            showgui=False,
+            plotrange=[-1, -1, -180, 180],
+            figfile=g_cal + '_phase.png'
+            )
+    plotcal(caltable=gtable,
+            field=g_cal,
+            xaxis='time',
+            yaxis='amp',
+            showgui=False,
+            plotrange=[-1, -1, -180, 180],
+            figfile=g_cal + '_amp.png'
+            )
+
 
 
 if __name__ == '__main__':
@@ -411,33 +368,34 @@ if __name__ == '__main__':
     g_cal = args.gain
     ref_ant = args.ref_ant
     ref_chans = args.ref_chans
-    setjy_cal = args.setjy
 
     if args.verbose:
         print('Processing with CASA')
         print('  msfile={}'.format(msfile))
         print('  prefix={}'.format(prefix))
-        print('  ref_ant={}'.format(ref_ant))
-        print('  target={}'.format(target))
-        print('  g_cal={}'.format(g_cal))
-        print('  b_cal={}'.format(b_cal))
         print('  f_cal={}'.format(f_cal))
+        print('  b_cal={}'.format(b_cal))
+        if g_cal is not None:
+            print('  g_cal={}'.format(g_cal))
+        if ref_ant is not None:
+            print('  ref_ant={}'.format(ref_ant))
+        if target is not None:
+            print('  target={}'.format(target))
 
     if args.fixvis:
         fixvis(vis=msfile, outputvis=prefix+'_fixvis.ms')
         msfile = prefix+'_fixvis.ms'
 
     calibrate(msfile,
-              ref_ant,
               f_cal,
               b_cal,
               g_cal,
-              setjy_cal=setjy_cal,
+              ref_ant,
               prelim_gcal=True,
               ref_chans=ref_chans,
-#               avg_time='50sec',
-              verbose=args.verbose,
-              interimcal=args.applycal,
               )
+
+    if args.verbose:
+        show_cal_solutions(f_cal, b_cal, g_cal, ktable, btable, gtable)
 
 # -fin-

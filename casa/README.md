@@ -13,4 +13,12 @@ run flagging_mkat_lband.py --msfile <filename.ms> --zeros --bp --lband --gps --g
 ```
 
 
+## Standard MeerKAT antenna based calibration
+* `casa --log2term --noglogger`
+* `run calibrate_mkat_lband.py -h`
+
+Usage example:    
+```
+run calibrating_mkat_lband.py --msfile <filename.ms> -f <f_cal> [-t <target>] [-g <g_cals>] [-b <b_cals>] [-r <ref_ant>]
+```
 
