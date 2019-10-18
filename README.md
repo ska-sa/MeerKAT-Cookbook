@@ -1,8 +1,19 @@
 # MeerKAT-Cookbook
-Recipes for MeerKAT data interaction and processing
+Recipes for MeerKAT data interaction and processing presented in CASA-Jupyter notebook format for easy
+interaction.    
+Usage and installation instruction for CASA-Jupyter can be found in [Github](https://github.com/aardk/jupyter-casa)
 
 MeerKAT data is stored in a flexible format called MeerKAT Visibility Format (MVF), and accessed/processed as needed.    
 Easy access and software specifically developed to handle MeerKAT large data sizes are provided through the MeerKAT archive and `katdal` packages.
+
+**Important Notes**:    
+If you are using the docker container to run the CASA-Jupyter notebooks, you will need to install
+`katdal`
+* run/start the docker container
+* enter the docker container as root: docker exec -tiu root `container ID` bash
+* install `katdal`: pip install katdal
+* for active notebooks, restart the notebook kernel (using the `Kernel` menu option)
+* running a cell with `import katdal` should now work
 
 **Note to reader**    
 MeerKAT data files are large and combining the data for an observation using the full array into single files cause sizes of Giga- to Tera bytes.
