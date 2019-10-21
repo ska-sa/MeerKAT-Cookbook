@@ -1,6 +1,5 @@
 ## Standard MeerKAT L-band flagging
-Refer to notebook [MeerKAT-Cookbook/utils/L-band RFI frequency
-flagging.ipynb](https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/utils/L-band%20RFI%20frequency%20flagging.ipynb)
+Refer to notebook "L-band RFI frequency flagging.ipynb"
 
 Apply standard L-band RFI flags for MeerKAT to CASA measurement set using utility script:
 * `casa --log2term --noglogger`
