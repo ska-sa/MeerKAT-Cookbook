@@ -43,6 +43,8 @@ Easy install
 pip install katdal
 ```
 
+Positional astronomy calculation use the [PyEphem](https://pypi.org/project/ephem/) library
+
 Detail `katdal` documentation with user guide instructions can be found on the `katdal`
 [User guide](https://katdal.readthedocs.io/en/latest/index.html)
 
