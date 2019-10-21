@@ -35,7 +35,7 @@ Example notebooks showing data interaction and extraction methods can be found i
 [Accessing MeerKAT observation data](https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/archive/Accessing%20MeerKAT%20observation%20data.ipynb)
 * `katdal` provides a script to convert these data sets to CASA MeasurementSets. 
 Using tokens to convert MVF files to CASA MeasurementSet:
-[Convert MVF dataset(s) to MeasurementSet](https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/utils/Convert%20MVF%20dataset(s)%20to%20MeasurementSet.ipynb)
+[Convert MVF dataset(s) to MeasurementSet](https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/archive/Convert%20MVF%20dataset(s)%20to%20MeasurementSet.ipynb)
 
 If you are following standard interferometric imaging data reduction using CASA measurement sets, you can also use the Direct Download Link to create and download a measurement set instead.    
 See [Archive Interface User Guide](https://archive.sarao.ac.za/statics/Archive_Interface_User_Guide.pdf) for detail.
@@ -77,14 +77,8 @@ CASA MeasurementSet data tables can be created using a convenient helper script 
 Measurement sets can be downloaded directly from the MeerKAT archive using some sensible defaults when created.     
 Examples on how to create measurement sets from a user control environment using tokens from the archive are given in example notebooks in the utils folder.
 
-Standard recipes for flagging, calibration and imaging are provided in the 
+Standard recipes for flagging and calibration are provided in the 
 [casa](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/casa) folder.
 
-The reader is advised to also consult the MeerKATHI pipeline.
-When comparing the recipe to the MeerKATHI configuration file, close .... of the recipe will be observed.
-
-
-## UTILS
-An assortment of helper scripts to assist the astronomer
 
  -fin-
