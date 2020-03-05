@@ -22,7 +22,7 @@ Important terminology that will pop up:
   These observations do not contain any relevant science data, but are useful for training and
   investigation of MeerKAT data and performance.
 
-  * The second import ID tag is the **Schedule Block ID**.
+* The second import ID tag is the **Schedule Block ID**.
   This ID is automatically assigned by the telescope per observation on execution.
   It distinguish the various observations performed, and allows easy search for newer observations in
   larger projects.
