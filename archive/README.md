@@ -11,10 +11,10 @@ proposal observations.
 publicly available, while access to science observations are under restrictions as documented in the
 MeerKAT data access policy.
 
-Important terminology that will pop up:
+Important terminology to note:
 
 * The **Observer Proposal ID** is assigned when an observation proposal gets submitted. It becomes the
-  primary reference for all observations associated with the observations related to the proposal.    
+  primary reference for all observations associated with the proposal.    
   The assignment of a `proposal ID` is mandatory, with two major differences: a `proposal ID` for
   submitted science observations are assigned following MeerKAT observation request policies.
   Science observation IDs can be identified by the `SCI` prefix.    
@@ -27,9 +27,14 @@ Important terminology that will pop up:
   It distinguish the various observations performed, and allows easy search for newer observations in
   larger projects.
 
-  If neither the `proposal ID` or the relevant `observation ID` is specified, all files available are
+  If neither the `proposal ID` nor the relevant `observation ID` is specified, all files available are
   listed.
 
+Here example commissioning data is used to allow the user direct interaction with the data through
+running the instructions presented in the notebooks:
+* [Small 4 antenna array observation of MeerKAT calibration targets in imaging
+  mode](https://archive.sarao.ac.za/search/1548417874)
+* [Large 50 antenna array with short calibrator observation in imaging mode](https://archive.sarao.ac.za/search/1557528200)
 
 Notebooks presented in this folder provides examples for data interaction using MeerKAT provided
 software `katdal`, as well as conversion of MVF files to CASA measurement sets for standard
