@@ -206,13 +206,6 @@ def primary_calibrators(msfile,
            "gaintype='K', solint='inf', refant='{}', "
            "combine='scan,field', solnorm=False, minsnr=3.0, "
            "gaintable=[])".format(msfile, ktable, delay_cal, ref_ant))
-#     if DEBUG:
-#         print(cmd)
-#     else:
-#         if os.access(ktable, F_OK):
-#             print('Deleting delay table before gaincal\n')
-#             rmtables(ktable)
-#         exec(cmd)
     _run_cmd(cmd, table=ktable)
     gaintable_list=[ktable]
 
@@ -224,13 +217,6 @@ def primary_calibrators(msfile,
                "calmode='p', minsnr=3.0, solnorm=True, "
                "gaintable={})".format(
                     msfile, gtable0, f_cal, ref_ant, ref_chans, [ktable]))
-#         if DEBUG:
-#             print(cmd)
-#         else:
-#             if os.access(gtable0, F_OK):
-#                 print('Deleting preliminary gain table before gaincal\n')
-#                 rmtables(gtable0)
-#             exec(cmd)
         _run_cmd(cmd, table=gtable0)
         gaintable_list.insert(0, gtable0)
 
@@ -241,13 +227,6 @@ def primary_calibrators(msfile,
            "combine='scan', solnorm=True, minsnr=3.0, "
            "gaintable={})".format(
                msfile, btable, bp_cal, ref_ant, gaintable_list))
-#     if DEBUG:
-#         print(cmd)
-#     else:
-#         if os.access(btable, F_OK):
-#             print('Deleting bandpass table before gaincal\n')
-#             rmtables(btable)
-#         exec(cmd)
     _run_cmd(cmd, table=btable)
 
     _print_msg('Gain calibration for flux calibrators')
@@ -257,13 +236,6 @@ def primary_calibrators(msfile,
            "refant='{}', combine='spw', solnorm=False, minsnr=1.0, "
            "gaintable={})".format(
                msfile, gtable, f_cal, ref_ant, [btable, ktable]))
-#     if DEBUG:
-#         print(cmd)
-#     else:
-#         if os.access(gtable, F_OK):
-#             print('Deleting gain table before gaincal\n')
-#             rmtables(gtable)
-#         exec(cmd)
     _run_cmd(cmd, table=gtable)
 
     return [ktable, btable, gtable]
@@ -284,10 +256,6 @@ def secondary_calibrators(msfile,
            "combine='spw', solnorm=False, minsnr=1.0, append=True, "
            "gaintable={})".format(
                msfile, gtable, g_cal, ref_ant, [btable, ktable]))
-#     if DEBUG:
-#         print(cmd)
-#     else:
-#         exec(cmd)
     _run_cmd(cmd)
 
     return gtable
@@ -305,13 +273,6 @@ def flux_calibration(msfile,
     cmd = ("fluxscale(vis='{}', caltable='{}', fluxtable='{}', "
            "reference='{}', transfer='{}')".format(
                msfile, gtable, ftable, f_cal, g_cal))
-#     if DEBUG:
-#         print(cmd)
-#     else:
-#         if os.access(ftable, F_OK):
-#             print('Deleting flux table before gaincal\n')
-#             rmtables(ftable)
-#         exec(cmd)
     _run_cmd(cmd, table=ftable)
     return ftable
 
@@ -344,10 +305,6 @@ def apply_calibration(msfile,
                          cal,
                          bp_cal,
                          delay_cal)
-#         if DEBUG:
-#             print(cmd)
-#         else:
-#             exec(cmd)
         _run_cmd(cmd)
 
     # apply calibration to targets
@@ -359,10 +316,6 @@ def apply_calibration(msfile,
                              g_cal,
                              bp_cal,
                              delay_cal)
-#             if DEBUG:
-#                 print(cmd)
-#             else:
-#                 exec(cmd)
             _run_cmd(cmd)
 
 
