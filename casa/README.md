@@ -59,10 +59,11 @@
    * Apply calibration solutions to calibrators and targets, `--applycal`
    * View CASA command being applied, `--verbose`
    * Only view CASA commands and do not calculate calibration solutions, `--debug`
+
    Use `run calibrating_mkat_lband.py -h` to view all available options
 
-   <ADD EXAMPLE NOTEBOOK SHOWING THE BASIC STEPS PERFORMED BY THE ALGORITHM>
-   <ADD NOTEBOOK TO VIEW CALIBRATION RESULTS USING PLOTCAL>
+   TODO: ADD EXAMPLE NOTEBOOK SHOWING THE BASIC STEPS PERFORMED BY THE ALGORITHM
+   TODO: ADD NOTEBOOK TO VIEW CALIBRATION RESULTS USING PLOTCAL
 
    View calibrated data for calibrators to highlight if further flagging is needed
    ```
