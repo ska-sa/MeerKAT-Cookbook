@@ -63,6 +63,16 @@
    Use `run calibrating_mkat_lband.py -h` to view all available options
 
    TODO: ADD EXAMPLE NOTEBOOK SHOWING THE BASIC STEPS PERFORMED BY THE ALGORITHM
+
+   View calibration results in calibration tables.
+   Note: for gain calibration tables, the targets to plot must be specified by either selecting
+   to display the primary calibrators, or the gain ('secondary') calibrator
+   ```
+   run inspect_cal_solutions.py [--delaycal <ktable>] [--bpcal <btable>] [[--gaincal <gtable>]
+   [--primary <b_cal>] [--secondary <g_cal>]]
+   ```
+   Relevant images will be produced as PNG format in the working directory
+
    TODO: ADD NOTEBOOK TO VIEW CALIBRATION RESULTS USING PLOTCAL
 
    View calibrated data for calibrators to highlight if further flagging is needed
@@ -87,7 +97,7 @@
    or 'corr'>)
    ```
 
-   Validation of calibration results
+   Validation of calibration solutions
    ```
    plotms(vis=<msfile>, xaxis='imag', yaxis='real', correlation='XX,YY', xdatacolumn='corrected',
    ydatacolumn='corrected', field=<calibrator>, avgscan=False, coloraxis='scan', spw='*:2100~2300')
