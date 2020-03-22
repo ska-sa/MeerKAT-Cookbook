@@ -111,7 +111,7 @@ def bp_edges_flagging(msfile,
 def mw_flagging(msfile):
     flagdata(vis=msfile,
              mode='manual',
-             spw='*:1420.0MHz~1421.3MHZ',
+             spw='*:1420.0MHZ~1421.3MHZ',
              flagbackup=False)
 
 
@@ -120,7 +120,7 @@ def lband_env_flagging(msfile,
                        ligo_freq=None):
     # flag out aviation channels
     if ligo_freq is None:
-        ligo_freq = '*:1080MHz~1095MHZ'
+        ligo_freq = '*:1080MHZ~1095MHZ'
     flagdata(vis=msfile,
              mode='manual',
              spw=ligo_freq,
@@ -133,7 +133,7 @@ def lband_env_flagging(msfile,
     # Alkantpan
     flagdata(vis=msfile,
              mode='manual',
-             spw='*:1600MHz',
+             spw='*:1600MHZ',
              flagbackup=False)
 
 
