@@ -15,7 +15,7 @@
    ```
    Functionality is illustrated in the notebook
    [L-band RFI frequency
-   flagging.ipynb](https://github.com/ska-sa/MeerKAT-Cookbook/blob/add_large_file_examples/casa/L-band%20RFI%20frequency%20flagging.ipynb)
+   flagging.ipynb](https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/casa/L-band%20RFI%20frequency%20flagging.ipynb)
 
 4. Default flagging is followed by data inspection and manual flagging.
    Since the data files are very large, this generally requires some form of averaging or selection
@@ -48,6 +48,9 @@
    plotms(vis=<msfile>, xaxis='time', yaxis='amp', correlation='XX,YY', field=<calibrator>, coloraxis='corr',
    averagedata=True, avgbaseline=True, avgchannel='4096', iteraxis='scan')
    ```
+
+   Functionality is illustrated in the notebook
+   [Inspect and flagging data before calibration.ipynb](https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/casa/Inspect%20and%20flagging%20data%20before%20calibration.ipynb)
 
 5. Standard antenna based calibration
    ```
