@@ -65,7 +65,8 @@
 
    Use `run calibrating_mkat_lband.py -h` to view all available options
 
-   TODO: ADD EXAMPLE NOTEBOOK SHOWING THE BASIC STEPS PERFORMED BY THE ALGORITHM
+   Functionality is illustrated in the notebook
+   [Calibrating data.ipynb](https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/casa/Calibrating%20data.ipynb)
 
    View calibration results in calibration tables.
    Note: for gain calibration tables, the targets to plot must be specified by either selecting
@@ -76,7 +77,8 @@
    ```
    Relevant images will be produced as PNG format in the working directory
 
-   TODO: ADD NOTEBOOK TO VIEW CALIBRATION RESULTS USING PLOTCAL
+   Functionality is illustrated in the notebook
+   [Verify calibrated data and calibrate target.ipynb](https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/casa/Verify%20calibrated%20data%20and%20calibrate%20target.ipynb)
 
    View calibrated data for calibrators to highlight if further flagging is needed
    ```
@@ -115,24 +117,14 @@
    field=<target>, coloraxis='corr', averagedata=True, avgbaseline=True, avgchannel='4096')
    ```
 
+6. Imaging is more efficient using `wsclean`, some CASA examples are presented in two notebooks    
+   [Calibrator imaging.ipynb](https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/casa/Calibrator%20imaging.ipynb)    
+   [Imaging spectral line.ipynb](https://github.com/ska-sa/MeerKAT-Cookbook/blob/master/casa/Imaging%20spectral%20line.ipynb)
 
 
-6. Imaging
-
-
-
-
-
-
-Note: remember to flag both versions the same, and then apply the xcorr calibration to the
-auto-corr data sets to get calibrated data
-
-
-
-
-
-
-
-
+**Summary**    
+The notebooks and CASA script provide an introduction to interacting with MeerKAT data.
+Processing of very large files are best done using pipelines such as [MeerKATHI](https://pypi.org/project/meerkathi/).
+The notebook recipes closely follow an example configuration input file (`config.yml`) for MeerKATHI pipeline implementation.
 
 -fin-
