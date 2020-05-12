@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- Duplicated from https://www.atnf.csiro.au/people/Keith.Bannister/senscalc/ with permission -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Bootstrap -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+<script>
+// Copyright (C) CSIRO 2014
+// Author: Keith Bannister <keith.bannister@csiro.au>
+// Sensitivity calculator observaionts
+//
+// Used with permission
+
+"use strict";
+
+var kb = 1.38e-23; // Boltzmanns' constant. W/Hz
+
+function recalc(eventObject) {
+    var nant = parseFloat($("#nant").val());
+    var d = parseFloat($("#dant").val());
+    var tsys = parseFloat($("#tsys").val());
+    var eta = parseFloat($("#eta").val());
+    var tint = parseFloat($("#tint").val());
+    var bw = parseFloat($("#bandwidth").val());
+    var npol = parseFloat($('input[name=npol]:checked', '#sensform').val())
+
+    var ant_area = Math.PI * d * d / 4.0; // m^2
+    var arr_area = nant * ant_area; // m^2
+    var ant_k = eta * ant_area / 2.0 / kb;  // K/W
+    var ant_g = 1.0/ant_k * 1e26; // Jy/K
+    var SEFD = ant_g * tsys;
+
+    var sigma = SEFD/Math.sqrt(npol * nant * (nant - 1) * bw * 1e6 * tint)*1e6; // uJy
+
+    $("#rms").val(sigma.toPrecision(4));
+    $("#sefd").val(SEFD.toPrecision(4));
+    $("#aant").val(ant_area.toFixed(1));
+    $("#aarr").val(arr_area.toFixed(1));
+    $("#antg").val(ant_g.toPrecision(4));
+}
+</script>
+
+<title>Radio telescope sensitivity calculator</title>
+
+</head>
+
+<body role="document">
+
+<div class="container" role="main">
+
+&nbsp;
+<row>
+
+<form class="form-horizontal" id="sensform">
+<fieldset>
+
+<legend>Simple Sensitivity Calculator (with MeerKAT defaults)</legend>
+<!-- Form Name -->
+
+<div class="col-sm-4">
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="nant">Number of antennas</label>  
+  <div class="col-md-4">
+  <input id="nant" name="nant" type="number" placeholder="" class="data-input form-control input-md" value="58" min="1" required="true">
+  <span class="help-block">Number of antennas</span>  
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="nant">Diameter</label>  
+  <div class="col-md-4">
+  <input id="dant" name="dant" type="number" step="any" placeholder="" class="data-input form-control input-md" value="13.5" min="0" required="true">
+  <span class="help-block">Antenna diameter (m)</span>  
+  </div>
+</div>
+
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="Tsys">Tsys (K)</label>  
+  <div class="col-md-4">
+  <input id="tsys" name="Tsys" type="number" step="any" placeholder="" class="data-input form-control input-md" value="21" min="0" required="true">
+  <span class="help-block">System temperature</span>  
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="eta">Eta</label>  
+  <div class="col-md-4">
+  <input id="eta" name="eta" type="number" step="0.01" placeholder="" class="data-input form-control input-md" value="0.7" min="0" max="1">
+  <span class="help-block">Antenna efficiency</span>  
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="tint">Integration time (s)</label>  
+  <div class="col-md-4">
+  <input id="tint" name="tint" type="number" step="any" placeholder="" class="data-input form-control input-md" value="3600" min="0">
+  <span class="help-block">Integration time (seconds)</span>  
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="b">Bandwidth</label>  
+  <div class="col-md-4">
+  <input id="bandwidth" name="b" type="number" step="any" placeholder="" class="data-input form-control input-md" value="856" min="0">
+  <span class="help-block">Bandwidth (MHz)</span>  
+  </div>
+</div>
+
+<!-- Multiple Radios (inline) -->
+<div class="control-group" style="display: none;">
+    <label class="control-label" for="radios">Number of polarisations</label>
+    <div class="controls" id="npol">
+          <label class="radio inline" for="radios-0">
+            <input type="radio" name="npol" id="radios-0" value="1" class="data-input" checked="checked">
+            1
+          </label>
+          <label class="radio inline" for="radios-1">
+            <input type="radio" name="npol" id="radios-1" value="2" class="data-input">
+            2
+          </label>
+        </div>
+</div>
+
+
+</div>
+<div class="col-sm-4">
+
+
+  <!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="aant">Antenna Area</label>  
+  <div class="col-md-4">
+  <input id="aant" name="aant" type="text" placeholder="" class="form-control input-md" readonly="true">
+  <span class="help-block">Antenna area (m squared)</span>  
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="aarr">Array Area</label>  
+  <div class="col-md-4">
+  <input id="aarr" name="aarr" type="text" placeholder="" class="form-control input-md" readonly="true">
+  <span class="help-block">Antenna area (m squared)</span>  
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="sefd">SEFD</label>  
+  <div class="col-md-4">
+  <input id="sefd" name="sefd" type="text" placeholder="" class="form-control input-md" readonly="true">
+  <span class="help-block">System Equivalent Flux Density (Jy)</span>  
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="antg">Antenna Gain</label>  
+  <div class="col-md-4">
+  <input id="antg" name="antg" type="text" placeholder="" class="form-control input-md" readonly="true">
+  <span class="help-block">Antenna Gain (Jy/K)</span>  
+  </div>
+</div>
+
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="rms">RMS</label>  
+  <div class="col-md-4">
+  <input id="rms" name="rms" type="text" placeholder="" class="form-control input-md" readonly="true">
+  <span class="help-block">Naturally weighted RMS (μJy)</span>  
+  </div>
+</div>
+
+</div></fieldset>
+<legend style='font-size: 14px;'>Based on an original work: Copyright CSIRO 2014 (Keith Bannister <keith.bannister@csiro.au>)
+</legend>
+</form>
+
+</row></div>
+
+<script>
+$(function() {
+$(".data-input").change(recalc);
+recalc();
+});
+
+</script>
+ 
+</body></html>
