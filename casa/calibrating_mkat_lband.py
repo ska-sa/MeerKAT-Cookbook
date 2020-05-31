@@ -17,6 +17,8 @@ import casac
 import os
 
 ## -- global parameters for script --
+DEBUG = False
+VERBOSE = False
 flux_calibrators = {'J0408-6545': [17.1, 0, 0, 0],
                     'J1939-6342': 'Stevens-Reynolds 2016',
                     'J1331+3030': 'Perley-Butler 2013',
@@ -24,7 +26,9 @@ flux_calibrators = {'J0408-6545': [17.1, 0, 0, 0],
 ## -- global parameters for script --
 
 
+## -- utility functions --
 def _get_prefix(msfile):
+    """Extract basename of MS as prefix for new namings"""
     return os.path.splitext(os.path.basename(msfile))[0]
 
 
@@ -33,16 +37,40 @@ def _str2list(string_):
     return list(set(list_))
 
 
-def print_msg(msg):
+def _list2str(list_):
+    if len(list_) > 0:
+        return ','.join(list(set(list_)))
+    else:
+        return ''
+
+
+def _print_msg(msg):
     """
     Intended for status messages within CASA during calibration.
     Extra padding to make it stand out amongst all the other CASA output
     """
-    border = '#' * ((len(msg) + 8))
+    border = '#' * (23)
     msg_text = '\n{}'.format(border)
     msg_text += '### {} ###'.format(msg)
     msg_text += '{}\n'.format(border)
     print(msg_text)
+
+
+def _run_cmd(cmd, table=None):
+    if DEBUG or VERBOSE:
+        print(cmd)
+        if DEBUG:
+            return None
+
+    if table is not None:
+        if os.access(table, F_OK):
+            print('Deleting {} before cal\n'.format(table))
+            rmtables(table)
+
+    exec(cmd)
+
+
+## -- utility functions --
 
 
 def cli():
@@ -53,6 +81,16 @@ def cli():
             usage=usage,
             description=description,
             formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument(
+            '-v', '--verbose',
+            action='store_true',
+            help='verbose output of casa commands while executing',
+            )
+    parser.add_argument(
+            '--debug',
+            action='store_true',
+            help='output of casa commands for debugging without execution',
+            )
     group = parser.add_argument_group(
             title="required arguments",
             description="arguments required by the script to run")
@@ -140,10 +178,14 @@ def cli():
     if args.bpcal is None:
         args.bpcal = args.fluxcal
     if args.delaycal is None:
-        args.delaycal = args.bpcal
+        args.delaycal = args.fluxcal
     if args.debug:
         global DEBUG
         DEBUG = True
+
+    if args.verbose:
+        global VERBOSE
+        VERBOSE = True
 
     return args
 
@@ -158,75 +200,43 @@ def primary_calibrators(msfile,
                         ):
 
     prefix = _get_prefix(msfile)
-
-    print_msg('Doing delay calibration using flux calibrator')
+    _print_msg('Delay calibration')
     ktable = prefix + '.K'
-    if os.access(ktable, F_OK):
-        print('Deleting delay table before gaincal\n')
-        rmtables(ktable)
-    gaincal(vis=msfile,
-            caltable=ktable,
-            field=delay_cal,
-            gaintype='K',
-            solint='inf',
-            refant=ref_ant,
-            combine='scan,field',
-            solnorm=False,
-            minsnr=3.0,
-            gaintable=[])
-
+    cmd = ("gaincal(vis='{}', caltable='{}', field='{}', "
+           "gaintype='K', solint='inf', refant='{}', "
+           "combine='scan,field', solnorm=False, minsnr=3.0, "
+           "gaintable=[])".format(msfile, ktable, delay_cal, ref_ant))
+    _run_cmd(cmd, table=ktable)
     gaintable_list=[ktable]
+
     if prelim_gcal:
-        print_msg('Doing preliminary gain calibration')
+        _print_msg('Preliminary gain calibration')
         gtable0 = prefix + '.G0'
-        if os.access(gtable0, F_OK):
-            print('Deleting preliminary gain table before gaincal\n')
-            rmtables(gtable0)
-        gaincal(vis=msfile,
-                caltable=gtable0,
-                field=bp_cal,
-                gaintype='G',
-                solint='inf',
-                refant=ref_ant,
-                spw=ref_chans,
-                calmode='p',
-                minsnr=3.0,
-                solnorm=True,
-                gaintable=[ktable])
-        gaintable_list=[gtable0,ktable]
+        cmd = ("gaincal(vis='{}', caltable='{}', field='{}', "
+               "gaintype='G', solint='inf', refant='{}', spw='{}', "
+               "calmode='p', minsnr=3.0, solnorm=True, "
+               "gaintable={})".format(
+                    msfile, gtable0, f_cal, ref_ant, ref_chans, [ktable]))
+        _run_cmd(cmd, table=gtable0)
+        gaintable_list.insert(0, gtable0)
 
-    print_msg('Doing bandpass calibration')
+    _print_msg('Bandpass calibration')
     btable = prefix + '.B'
-    if os.access(btable, F_OK):
-        print('Deleting bandpass table before gaincal\n')
-        rmtables(btable)
-    bandpass(vis=msfile,
-             caltable=btable,
-             field=f_cal,
-             bandtype='B',
-             solint='inf',
-             refant=ref_ant,
-             combine='scan',
-             solnorm=True,
-             minsnr=3.0,
-             gaintable=gaintable_list)
+    cmd = ("bandpass(vis='{}', caltable='{}', field='{}', "
+           "bandtype='B', solint='inf', refant='{}', "
+           "combine='scan', solnorm=True, minsnr=3.0, "
+           "gaintable={})".format(
+               msfile, btable, bp_cal, ref_ant, gaintable_list))
+    _run_cmd(cmd, table=btable)
 
-    print_msg('Gain calibration for primary calibrators')
+    _print_msg('Gain calibration for flux calibrators')
     gtable = prefix + '.G'
-    if os.access(gtable, F_OK):
-        print('Deleting gain table before gaincal\n')
-        rmtables(gtable)
-    gaincal(vis=msfile,
-            caltable=gtable,
-            field=bp_cal,
-            gaintype='G',
-            calmode='ap',
-            solint='inf',
-            refant=ref_ant,
-            combine='spw',
-            solnorm=False,
-            minsnr=1.0,
-            gaintable=[btable, ktable])
+    cmd = ("gaincal(vis='{}', caltable='{}', field='{}', "
+           "gaintype='G', calmode='ap', solint='int', "
+           "refant='{}', combine='spw', solnorm=False, minsnr=1.0, "
+           "gaintable={})".format(
+               msfile, gtable, f_cal, ref_ant, [btable, ktable]))
+    _run_cmd(cmd, table=gtable)
 
     return [ktable, btable, gtable]
 
@@ -239,84 +249,74 @@ def secondary_calibrators(msfile,
                           ref_ant='',
                           ):
 
-    print_msg('Appending gain calibration for secondary calibrators')
-    gaincal(vis=msfile,
-            caltable=gtable,
-            field=g_cal,
-            gaintype='G',
-            calmode='ap',
-            solint='inf',
-            refant=ref_ant,
-            combine='spw',
-            solnorm=False,
-            minsnr=1.0,
-            append=True,
-            gaintable=[btable, ktable])
+    prefix = _get_prefix(msfile)
+    _print_msg('Gain calibration for remaining calibrators')
+    cmd = ("gaincal(vis='{}', caltable='{}', field='{}', "
+           "gaintype='G', calmode='ap', solint='int', refant='{}', "
+           "combine='spw', solnorm=False, minsnr=1.0, append=True, "
+           "gaintable={})".format(
+               msfile, gtable, g_cal, ref_ant, [btable, ktable]))
+    _run_cmd(cmd)
 
     return gtable
 
 
 def flux_calibration(msfile,
+                     ftable,
                      gtable,
-                     flux_cals,
+                     f_cal,
+                     g_cal,
                      ):
     prefix = _get_prefix(msfile)
-    print_msg('Fluxscale calibration for secondary cal')
+    _print_msg('Fluxscale calibration for secondary cal')
     ftable = prefix + '.flux'
-    if os.access(ftable, F_OK):
-        print('Deleting flux table before gaincal\n')
-        rmtables(ftable)
-    fluxscale(vis=msfile,
-              caltable=gtable,
-              fluxtable=ftable,
-              reference=f_cal,
-              transfer=flux_cals)
-
+    cmd = ("fluxscale(vis='{}', caltable='{}', fluxtable='{}', "
+           "reference='{}', transfer='{}')".format(
+               msfile, gtable, ftable, f_cal, g_cal))
+    _run_cmd(cmd, table=ftable)
     return ftable
 
 
 def apply_calibration(msfile,
-                      cal_tables,
+                      cals,
+                      gaintables,
+                      g_cal,
+                      bp_cal,
                       delay_cal,
-                      f_cal,
-                      g_cals=None,
                       targets=None,
                       ):
 
-    print_msg('Apply calibration results')
-    clearstat()
+    _print_msg('Apply calibration results')
+    if not DEBUG:
+        clearstat()
 
-    # apply calibration to flux calibrators
-    cmd = _apply_cmd(msfile, f_cal, cal_tables, )
-    applycal(vis=msfile,
-             field=f_cal,
-             gaintable=cal_tables,
-             gainfield=[f_cal, f_cal, delay_cal],
-             interp=['', 'nearest', ''],
-             calwt=False,
-             applymode='calflag')
+    def _build_cmd(msfile, gaintables, target, g_cal, bp_cal, delay_cal):
+        cmd = ("applycal(vis='{}', field ='{}', gaintable={}, gainfield={}, "
+               "interp=['', 'nearest', ''], calwt=False, "
+               "applymode='calflag')".format(
+                    msfile, target, gaintables, [g_cal, bp_cal, delay_cal]))
+        return cmd
 
-    # apply calibration to other calibrators
-    if g_cals is not None:
-        for cal in g_cals:
-            applycal(vis=msfile,
-                     field=cal,
-                     gaintable=cal_tables,
-                     gainfield=[cal, f_cal, delay_cal],
-                     interp=['', 'nearest', ''],
-                     calwt=False,
-                     applymode='calflag')
+    # apply calibration to calibrators
+    for cal in cals:
+        cmd = _build_cmd(msfile,
+                         gaintables,
+                         cal,
+                         cal,
+                         bp_cal,
+                         delay_cal)
+        _run_cmd(cmd)
 
-    # target calibration
-    if target is not None:
+    # apply calibration to targets
+    if targets is not None:
         for tgt in targets:
-            applycal(vis=msfile,
-                     field=tgt,
-                     gaintable=cal_tables,
-                     gainfield=[g_cal, f_cal, delay_cal],
-                     interp=['', 'nearest', ''],
-                     calwt=False,
-                     applymode='calflag')
+            cmd = _build_cmd(msfile,
+                             gaintables,
+                             tgt,
+                             g_cal,
+                             bp_cal,
+                             delay_cal)
+            _run_cmd(cmd)
 
 
 def calibrate(msfile,
@@ -328,26 +328,30 @@ def calibrate(msfile,
               standard=None,
               prelim_gcal=False,
               ref_chans='',
-              applycal=False,
               ):
 
-    print_msg('Clear existing calibration results')
-    clearcal(msfile)
+    _print_msg('Clear existing calibration results')
+    cmd = "clearcal('{}')".format(msfile)
+    _run_cmd(cmd)
+
+    ktable = ''
+    btable = ''
+    gtable = ''
+    ftable = ''
 
     # To convert correlation coefficients to absolute flux densities
-    print_msg('Apply flux model to flux calibrator')
+    _print_msg('Apply flux model to flux calibrator')
     if type(standard) is list:
-        setjy(vis=msfile,
-              field=f_cal,
-              scalebychan=True,
-              standard='manual',
-              fluxdensity=standard)
+        cmd = ("setjy(vis='{}', field='{}', "
+               "scalebychan=True, standard='manual', "
+               "fluxdensity={})".format(
+                      msfile, f_cal, standard))
     else:
-        setjy(vis=msfile,
-              field=f_cal,
-              scalebychan=True,
-              standard=standard,
-              fluxdensity=-1)
+        cmd = ("setjy(vis='{}', field='{}', "
+              "scalebychan=True, "
+              "standard='{}', fluxdensity=-1)".format(
+                      msfile, f_cal, standard))
+    _run_cmd(cmd)
 
     [ktable, btable, gtable] = primary_calibrators(msfile,
                                                    f_cal,
@@ -357,75 +361,99 @@ def calibrate(msfile,
                                                    prelim_gcal=prelim_gcal,
                                                    ref_chans=ref_chans,
                                                    )
+    msg = lambda str_ : 'No {} solution, exiting...'.format(str_)
+    if not os.path.isdir(ktable) and not DEBUG:
+        raise RuntimeError(msg('delay'))
+    if not os.path.isdir(btable) and not DEBUG:
+        raise RuntimeError(msg('bandpass'))
+    if not os.path.isdir(gtable) and not DEBUG:
+        raise RuntimeError(msg('gain'))
 
+    cal_tables = [gtable, btable, ktable]
+
+    cals = _str2list(bp_cal)
+    f_cals = _str2list(f_cal)
+    for cal in cals:
+        if cal in f_cals:
+            cals.remove(cal)
     if g_cal is not None:
-        g_cals = _str2list(g_cal)
-        primcals = _str2list('{},{}'.format(bp_cal, f_cal))
-        for cal in primcals:
-            if cal in g_cals:
-                g_cals.remove(cal)
+        cals += _str2list(g_cal)
+    g_cal = _list2str(cals)
+    if g_cal:
         gtable = secondary_calibrators(msfile,
                                        ktable,
                                        btable,
                                        gtable,
-                                       g_cal=','.join(g_cals),
+                                       g_cal=g_cal,
                                        ref_ant=ref_ant,
                                        )
-    cal_tables = [gtable, btable, ktable]
 
-    secondcals = _str2list('{},{}'.format(bp_cal, g_cal))
-    for cal in f_cal.split(','):
-        if cal in secondcals:
-            secondcals.remove(cal)
-    if len(secondcals) > 0:
         ftable = flux_calibration(msfile,
+                                  ftable,
                                   gtable,
-                                  flux_cals=','.join(secondcals))
+                                  f_cal,
+                                  g_cal)
         if not os.path.isdir(ftable) and not DEBUG:
             raise RuntimeError(msg('flux'))
         cal_tables = [ftable, btable, ktable]
 
-    if applycal:
-        bp_cals = _str2list(bp_cal)
-        for cal in f_cal.split(','):
-            if cal in bp_cals:
-                bp_cals.remove(cal)
-        targets = _str2list(target)
-        apply_calibration(msfile,
-                          cal_tables,
-                          delay_cal,
-                          f_cal,
-                          g_cals=secondcals,
-                          targets=targets)
+    return cal_tables
 
 
 if __name__ == '__main__':
     args = cli()
 
     msfile = args.msfile
+    f_cal = args.fluxcal
     bp_cal = args.bpcal
     delay_cal = args.delaycal
-    f_cal = args.fluxcal
     g_cal = args.gaincal
     target = args.target
     ref_ant = args.ref_ant
 
+    _print_msg("Processing with CASA")
+    print("  msfile='{}'".format(msfile))
+    print("  f_cal='{}'".format(f_cal))
+    print("  bp_cal='{}'".format(bp_cal))
+    print("  delay_cal='{}'".format(delay_cal))
+    if g_cal is not None:
+        print("  g_cal='{}'".format(g_cal))
+    if target is not None:
+        print("  target='{}'".format(target))
+    if ref_ant is not None:
+        print("  ref_ant='{}'".format(ref_ant))
+
     if args.fixvis:
         prefix = _get_prefix(msfile)
-        print_msg('Correct phase center with fixvis')
-        fixvis(vis=msfile, outputvis=prefix+'_fixvis.ms')
+        _print_msg('Correct phase center with fixvis')
+        cmd = "fixvis(vis='{}', outputvis='{}')".format(
+                msfile, prefix+'_fixvis.ms')
+        _run_cmd(cmd)
         msfile = prefix+'_fixvis.ms'
+        print('Phase center correction')
+        print("  msfile='{}'".format(msfile))
 
-    calibrate(msfile,
-              f_cal,
-              bp_cal,
-              delay_cal,
-              g_cal=g_cal,
-              ref_ant=ref_ant,
-              standard=args.standard,
-              prelim_gcal=True,
-              ref_chans=args.ref_chans,
-              applycal=args.applycal,
-              )
+    cal_tables = calibrate(msfile,
+                           f_cal,
+                           bp_cal,
+                           delay_cal,
+                           g_cal=g_cal,
+                           ref_ant=ref_ant,
+                           standard=args.standard,
+                           prelim_gcal=True,
+                           ref_chans=args.ref_chans,
+                           )
+
+    if args.applycal:
+        cals = _str2list(','.join((f_cal, bp_cal, g_cal)))
+        if target is not None:
+            targets = _str2list(target)
+            apply_calibration(msfile,
+                              cals,
+                              cal_tables,
+                              g_cal,
+                              bp_cal,
+                              delay_cal,
+                              targets)
 
 # -fin-

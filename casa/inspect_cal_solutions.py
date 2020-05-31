@@ -77,38 +77,59 @@ if __name__ == '__main__':
     if args.ktable:
         print_msg("Delays after calibration should be no more than "
                   "a few nanoseconds and spread around/close to zero.")
-        plotcal(caltable=args.ktable, xaxis='antenna', yaxis='delay',
-                showgui=args.verbose, figfile='Ktbl.png')
-
+        plotcal(caltable=args.ktable,
+                xaxis='antenna', yaxis='delay',
+                showgui=args.verbose, figfile='delay_solutions.png')
 
     if args.gtable0:
-        print_msg("Basic phase calibration to stabilize time varying components")
-        plotcal(caltable=args.gtable0, xaxis='time', yaxis='phase', plotrange=[-1, -1, -180, 180],
-                showgui=args.verbose, figfile='G0phase.png')
+        print_msg("Through away phase calibration to stabilize "
+                  "time varying components")
+        plotcal(caltable=args.gtable0,
+                xaxis='time', yaxis='phase',
+                plotrange=[-1, -1, -180, 180],
+                showgui=args.verbose, figfile='prelim_phase_solutions.png')
 
     if args.btable:
         print_msg("Phase solutions should be around 0")
-        plotcal(caltable=args.btable, xaxis='chan', yaxis='phase',
-                showgui=args.verbose, figfile='Bphase.png')
+        plotcal(caltable=args.btable,
+                xaxis='chan', yaxis='phase',
+                showgui=args.verbose, figfile='bandpass_phase_solutions.png')
         print_msg("Passband amp around 1. and consistent with bandpass shape.")
-        plotcal(caltable=args.btable, xaxis='chan', yaxis='amp',
-                showgui=args.verbose, figfile='Bamp.png')
+        plotcal(caltable=args.btable,
+                xaxis='chan', yaxis='amp',
+                showgui=args.verbose, figfile='bandpass_amp_solutions.png')
 
     if args.gtable:
         print_msg("Phase solutions should be in a straight line")
         if args.primary:
-            plotcal(caltable=args.gtable, xaxis='time', yaxis='phase', field=args.primary,
-                    plotrange=[-1, -1, -180, 180], showgui=args.verbose, figfile='Gphase_bp.png')
+            plotcal(caltable=args.gtable,
+                    xaxis='time', yaxis='phase',
+                    field=args.primary,
+                    plotrange=[-1, -1, -180, 180],
+                    showgui=args.verbose,
+                    figfile='primary_gain_phase_solutions.png')
         if args.secondary:
-            plotcal(caltable=args.gtable, xaxis='time', yaxis='phase', field=args.secondary,
-                    plotrange=[-1, -1, -180, 180], showgui=args.verbose, figfile='Gphase_gain.png')
-        print_msg("Flux density for the flux calibrator, if corrected, should lie close to or around 1"
-                  "Fluxes for secondary calibrators have not been corrected yet and are offset")
+            plotcal(caltable=args.gtable,
+                    xaxis='time', yaxis='phase',
+                    field=args.secondary,
+                    plotrange=[-1, -1, -180, 180],
+                    showgui=args.verbose,
+                    figfile='secondary_gain_phase_solution.png')
+        print_msg("Flux density for the flux calibrator, if corrected, "
+                  "should lie close to or around 1"
+                  "Fluxes for secondary calibrators have not been corrected yet "
+                  "and are offset")
         if args.primary:
-            plotcal(caltable=args.gtable, xaxis='time', yaxis='amp', field=args.primary,
-                    showgui=args.verbose, figfile='Gamp_bp.png')
+            plotcal(caltable=args.gtable,
+                    xaxis='time', yaxis='amp',
+                    field=args.primary,
+                    showgui=args.verbose,
+                    figfile='primary_gain_amp_solutions.png')
         if args.secondary:
-            plotcal(caltable=args.gtable, xaxis='time', yaxis='amp', field=args.secondary,
-                    showgui=args.verbose, figfile='Gamp_gain.png')
+            plotcal(caltable=args.gtable,
+                    xaxis='time', yaxis='amp',
+                    field=args.secondary,
+                    showgui=args.verbose,
+                    figfile='secondary_gain_amp_solutions.png')
 
 # -fin-
