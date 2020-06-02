@@ -3,6 +3,7 @@
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
 
 <!-- Bootstrap -->
 <!-- Latest compiled and minified CSS -->
@@ -13,6 +14,26 @@
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+<style>
+.help-block {
+  text-align: right;
+}
+
+label.error {
+    color: red;
+    font-size: 1rem;
+    display: block;
+    margin-top: 5px;
+}
+
+input.error {
+    border: 1px dashed red;
+    font-weight: 300;
+    color: red;
+}
+
+</style>
 
 <script>
 // Copyright (C) CSIRO 2014
@@ -47,7 +68,21 @@ function recalc(eventObject) {
     $("#aant").val(ant_area.toFixed(1));
     $("#aarr").val(arr_area.toFixed(1));
     $("#antg").val(ant_g.toPrecision(4));
+    $("#sensform").valid();
 }
+
+$(document).ready(function() {
+  $("#sensform").validate({
+   rules: {
+     nant: { required: true, number: true, min: 4, max: 64 },
+     Tsys: { required: true, number: true, min: 10, max: 50},
+     eta: { required: true, number: true, min: 0.5, max: 1.0},
+     tint: { required: true, number: true, min: 600, max: 36000},
+     b: { required: true, number: true, min: 8, max: 856}
+   }
+  });
+});
+
 </script>
 
 <title>Radio telescope sensitivity calculator</title>
@@ -71,55 +106,55 @@ function recalc(eventObject) {
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="nant">Number of antennas</label>  
-  <div class="col-md-4">
+  <label class="col-md-5 control-label" for="nant">Number of antennas</label>  
+  <div class="col-md-5">
   <input id="nant" name="nant" type="number" placeholder="" class="data-input form-control input-md" value="58" min="1" required="true">
-  <span class="help-block">Number of antennas</span>  
+  <span class="help-block">Default: 58</span>  
   </div>
 </div>
 
 <div class="form-group">
-  <label class="col-md-4 control-label" for="nant">Diameter</label>  
-  <div class="col-md-4">
-  <input id="dant" name="dant" type="number" step="any" placeholder="" class="data-input form-control input-md" value="13.5" min="0" required="true">
-  <span class="help-block">Antenna diameter (m)</span>  
+  <label class="col-md-5 control-label" for="nant">Diameter</label>  
+  <div class="col-md-5">
+  <input id="dant" readonly="true" name="dant" type="number" step="any" placeholder="" class="data-input form-control input-md" value="13.5" min="0" required="true">
+  <span class="help-block">Default: 13.5 m</span>  
   </div>
 </div>
 
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="Tsys">Tsys (K)</label>  
-  <div class="col-md-4">
+  <label class="col-md-5 control-label" for="Tsys">Tsys</label>  
+  <div class="col-md-5">
   <input id="tsys" name="Tsys" type="number" step="any" placeholder="" class="data-input form-control input-md" value="21" min="0" required="true">
-  <span class="help-block">System temperature</span>  
+  <span class="help-block">Default: 21 K</span>  
   </div>
 </div>
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="eta">Eta</label>  
-  <div class="col-md-4">
+  <label class="col-md-5 control-label" for="eta">Eta</label>  
+  <div class="col-md-5">
   <input id="eta" name="eta" type="number" step="0.01" placeholder="" class="data-input form-control input-md" value="0.7" min="0" max="1">
-  <span class="help-block">Antenna efficiency</span>  
+  <span class="help-block">Default: 0.7</span>  
   </div>
 </div>
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="tint">Integration time (s)</label>  
-  <div class="col-md-4">
+  <label class="col-md-5 control-label" for="tint">Integration time</label>  
+  <div class="col-md-5">
   <input id="tint" name="tint" type="number" step="any" placeholder="" class="data-input form-control input-md" value="3600" min="0">
-  <span class="help-block">Integration time (seconds)</span>  
+  <span class="help-block">Default: 3600 s</span>  
   </div>
 </div>
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="b">Bandwidth</label>  
-  <div class="col-md-4">
+  <label class="col-md-5 control-label" for="b">Bandwidth</label>  
+  <div class="col-md-5">
   <input id="bandwidth" name="b" type="number" step="any" placeholder="" class="data-input form-control input-md" value="856" min="0">
-  <span class="help-block">Bandwidth (MHz)</span>  
+  <span class="help-block">Default: 856 MHz</span>  
   </div>
 </div>
 
@@ -145,46 +180,46 @@ function recalc(eventObject) {
 
   <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="aant">Antenna Area</label>  
-  <div class="col-md-4">
+  <label class="col-md-5 control-label" for="aant">Antenna Area</label>  
+  <div class="col-md-5">
   <input id="aant" name="aant" type="text" placeholder="" class="form-control input-md" readonly="true">
-  <span class="help-block">Antenna area (m squared)</span>  
+  <span class="help-block">m^2</span>  
   </div>
 </div>
 
 <div class="form-group">
-  <label class="col-md-4 control-label" for="aarr">Array Area</label>  
-  <div class="col-md-4">
+  <label class="col-md-5 control-label" for="aarr">Array Area</label>  
+  <div class="col-md-5">
   <input id="aarr" name="aarr" type="text" placeholder="" class="form-control input-md" readonly="true">
-  <span class="help-block">Antenna area (m squared)</span>  
+  <span class="help-block">m^2</span>  
   </div>
 </div>
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="sefd">SEFD</label>  
-  <div class="col-md-4">
+  <label class="col-md-5 control-label" for="sefd">SEFD</label>  
+  <div class="col-md-5">
   <input id="sefd" name="sefd" type="text" placeholder="" class="form-control input-md" readonly="true">
-  <span class="help-block">System Equivalent Flux Density (Jy)</span>  
+  <span class="help-block">Jy</span>  
   </div>
 </div>
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="antg">Antenna Gain</label>  
-  <div class="col-md-4">
+  <label class="col-md-5 control-label" for="antg">Antenna Gain</label>  
+  <div class="col-md-5">
   <input id="antg" name="antg" type="text" placeholder="" class="form-control input-md" readonly="true">
-  <span class="help-block">Antenna Gain (Jy/K)</span>  
+  <span class="help-block">Jy/K</span>  
   </div>
 </div>
 
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="rms">RMS</label>  
-  <div class="col-md-4">
+  <label class="col-md-5 control-label" for="rms">Naturally Weighted RMS</label>  
+  <div class="col-md-5">
   <input id="rms" name="rms" type="text" placeholder="" class="form-control input-md" readonly="true">
-  <span class="help-block">Naturally weighted RMS (μJy)</span>  
+  <span class="help-block">μJy</span>  
   </div>
 </div>
 
