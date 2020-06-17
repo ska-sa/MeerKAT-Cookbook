@@ -103,6 +103,12 @@ $(document).ready(function() {
 <fieldset>
 
 <legend>Simple Sensitivity Calculator (with MeerKAT defaults)</legend>
+ <div class="row" style="margin-left: 0px; margin-bottom: 20px;">
+  <div class="col-sm-8">
+   <b>Note: </b>This calculator provides a lower bound on the expected noise floor for a given observation. It does not take into account effects such as confusion - for a more complete understanding of sensitivity please use the notebook based calculator available <a href="https://skaafrica.atlassian.net/rest/servicedesk/knowledgebase/latest/articles/view/41091107#SensitivityCalculators-AdvancedSensitivityCalculator" target="_blank">here</a>.
+  </div>
+ </div>
+
 <!-- Form Name -->
 
 <div class="col-sm-4">
@@ -157,8 +163,8 @@ $(document).ready(function() {
 <div class="form-group">
   <label class="col-md-5 control-label" for="b">Bandwidth</label>  
   <div class="col-md-5">
-  <input id="bandwidth" name="b" type="number" step="any" placeholder="" class="data-input form-control input-md" value="856" min="0">
-  <span class="help-block">Default: 856 MHz</span>  
+  <input id="bandwidth" name="b" type="number" step="any" placeholder="" class="data-input form-control input-md" value="500" min="0">
+  <span class="help-block">Default: 500 MHz</span>
   </div>
 </div>
 
@@ -167,11 +173,11 @@ $(document).ready(function() {
     <label class="control-label" for="radios">Number of polarisations</label>
     <div class="controls" id="npol">
           <label class="radio inline" for="radios-0">
-            <input type="radio" name="npol" id="radios-0" value="1" class="data-input" checked="checked">
+            <input type="radio" name="npol" id="radios-0" value="1" class="data-input">
             1
           </label>
           <label class="radio inline" for="radios-1">
-            <input type="radio" name="npol" id="radios-1" value="2" class="data-input">
+            <input type="radio" name="npol" id="radios-1" value="2" class="data-input" checked="checked">
             2
           </label>
         </div>
