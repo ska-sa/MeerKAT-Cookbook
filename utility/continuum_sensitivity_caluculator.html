@@ -1,0 +1,157 @@
+<!--
+NUM_HRS = 8.0    # modify this with your on-source time 
+
+# dont mod below this line
+# ---------------------------
+briggs = np.array([-2, -1.5, -1.0, -0.5, 0, 0.5, 1, 1.5, 2.0])
+synth_beam = np.array([4.35626, 4.80342, 5.87383, 7.65118, 10.911, 17.4973, 33.5949, 44.1468, 45.9398])
+rms2hrs = np.array([24, 22, 15, 7.5, 5, 5, 9, 11, 11])
+mightee_s3_confusion_limit = np.array([0.35,0.35,0.5,0.8,1.7,3.8,8.0,14,15])
+ian_confusion_limit = np.array([8.5, 4.5, 2.9, 2.5, 3, 3.5, 4.9, 5.8, 6])
+confusion_limit = np.min(np.vstack([mightee_s3_confusion_limit,
+                                    ian_confusion_limit]), axis=0)
+
+rms_scaling_factor = np.sqrt(2.0) / np.sqrt(NUM_HRS)
+#rms_sensitivity = np.max(np.vstack([rms2hrs * rms_scaling_factor, 
+#                                    confusion_limit]),
+#                         axis=0)
+rms_sensitivity = np.sqrt((np.vstack([rms2hrs * rms_scaling_factor, 
+                                    confusion_limit])**2).sum(axis=0))
+
+from matplotlib import pyplot as plt
+fig, ax1 = plt.subplots(figsize=(12, 6))
+ax1.plot(briggs, rms_sensitivity, 'bo-', label="Expected worst case after {0:.2f} hrs".format(NUM_HRS))
+ax1.set_xlabel("Briggs")
+ax1.set_title("Confusion+thermal continuum noise after {0:.2f} hrs".format(NUM_HRS))
+ax1.set_ylabel("Confusion+thermal RMS noise ($\mu$Jy/beam)", color='b')
+ax1.tick_params('y', colors='b')
+ax1.grid(True)
+ax1.fill_between(briggs, np.zeros_like(mightee_s3_confusion_limit), confusion_limit, facecolor="gray")
+ax1.text(0.8, 0.5, "COSMOS-adjusted confusion floor",
+         bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.3'))
+ax2 = ax1.twinx()
+plt2 = ax2.plot(briggs, synth_beam, 'ro-', label="Synthesized beam extent".format(NUM_HRS))
+ax2.set_ylabel("Synthesized beam major axis (arcsec)", color='r')
+ax2.tick_params('y', colors='r')
+plt.show()
+
+print("Best estimate for RMS in image: {0:.2f} muJy".format(np.min(rms_sensitivity)))
+-->
+
+
+<html>
+  <head>
+    <title></title>
+    <meta content="">
+    <style></style>
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+    <script language="javascript">
+        function plot() {
+            NUM_HRS=parseFloat(document.getElementsByName("edthrs")[0].value);
+            if (isNaN(NUM_HRS)){
+                window.alert("Invalid value for number of hours");
+            }
+            briggs = [-2, -1.5, -1.0, -0.5, 0, 0.5, 1, 1.5, 2.0]
+            mightee_s3_confusion_limit = [0.35,0.35,0.5,0.8,1.7,3.8,8.0,14,15]
+            ian_confusion_limit = [8.5, 4.5, 2.9, 2.5, 3, 3.5, 4.9, 5.8, 6]
+            synth_beam = [4.35626, 4.80342, 5.87383, 7.65118, 10.911, 17.4973, 33.5949, 44.1468, 45.9398]
+            confusion = []
+            for (i = 0; i < mightee_s3_confusion_limit.length; ++i) {
+                confusion.push(Math.min(mightee_s3_confusion_limit[i],
+                                        ian_confusion_limit[i]))
+            }
+            rms2hrs = [24, 22, 15, 7.5, 5, 5, 9, 11, 11]
+            rms_scaling_factor = Math.sqrt(2.0) / Math.sqrt(NUM_HRS)
+            rms_sensitivity = []
+            for (i = 0; i < rms2hrs.length; ++i) {
+                rms_sensitivity.push(Math.sqrt(Math.pow(rms2hrs[i] * rms_scaling_factor, 2) +
+                                            Math.pow(confusion[i], 2)))
+            }
+            var confusion_floor = {
+                x: briggs,
+                y: confusion,
+                type: 'scatter',
+                fill: 'tonexty',
+                name: 'Confusion floor'
+            };
+            
+            var beamsize = {
+                x: briggs,
+                y: synth_beam,
+                type: 'scatter',
+                yaxis: 'y2',
+                name: 'Synthesized beam size estimate'
+            };
+            
+            var rmssensitivity = {
+                x: briggs,
+                y: rms_sensitivity,
+                type: 'scatter',
+                name: 'Sensitivity ' + NUM_HRS + ' hrs'
+            };
+            
+            var layout = {
+                title: 'MeerKAT 64 continuum sensitivity estimation',
+                xaxis: {
+                    title: 'Robust weighting'
+                },
+                yaxis: {
+                    title: 'Sensitivity [uJy/beam]',
+                    titlefont: {color: 'rgb(0, 150, 0)'},
+                    tickfont: {color: 'rgb(0, 150, 0)'},
+                },
+                yaxis2: {
+                    title: 'Synthesized beam size [asec]',
+                    titlefont: {color: 'rgb(256, 0, 0)'},
+                    tickfont: {color: 'rgb(256, 0, 0)'},
+                    overlaying: 'y',
+                    side: 'right'
+                },
+                colorway : ['#aaaaaa', '#ff0000', '#00aa00', '#a262a9', '#6f4d96', '#3d3b72', '#182844'],
+                showlegend: true,
+                legend: {
+                    x: 0.25,
+                    y: 1.1,
+                    orientation: "h"
+                }
+            };
+
+            var data = [confusion_floor, beamsize, rmssensitivity];
+
+            Plotly.newPlot('myDiv', data, layout);
+        }
+    </script>
+  </head>
+  <body onresize="plot();">
+  <div> 
+    <table style="width:100%">
+        <tr>
+            <td>
+                <img src="https://www.sarao.ac.za/wp-content/uploads/2019/01/NRF_SARAO_sm1.png"/>
+            </td>
+            <td style="background-color:#006da3; color:#ffffff; text-align:center">
+                <h1> MeerKAT continuum sensitivity calculator </h1></div>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <div style="background-color:#cccccc;">
+    <form  action="" method="" onkeydown="return event.key != 'Enter';">
+        <table style="width:100%">
+            <tr>
+            <td style="width:80%">
+                Observation length (hrs)<input type="input" name="edthrs" value="2.0"/>
+            </td>
+            <td style="text-align:right; width:20%">
+                <button name="btncalc" type="button" onclick="plot();">Calculate</button>
+            </td>
+            </tr>
+        </table>
+    </form>
+  </div>
+  <div id='myDiv' width="100%"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <script language="javascript">
+        plot();
+    </script>
+  </body>
+</html>
