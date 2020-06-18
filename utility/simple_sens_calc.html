@@ -50,13 +50,12 @@ function recalc(eventObject) {
     var nant = parseFloat($("#nant").val());
     var d = parseFloat($("#dant").val());
     var tsyseta = parseFloat($("#tsyseta").val());
-    var eta = 1.0
-	//parseFloat($("#eta").val());
+	var eta = parseFloat($("#eta").val());
     var tint = parseFloat($("#tint").val());
     var bw = parseFloat($("#bandwidth").val());
     var npol = parseFloat($('input[name=npol]:checked', '#sensform').val())
 
-    var tsys = tsyseta*eta //Eta is set to 1
+    var tsys = tsyseta*eta;
     var ant_area = Math.PI * d * d / 4.0; // m^2
     var arr_area = nant * ant_area; // m^2
     var ant_k = eta * ant_area / 2.0 / kb;  // K/W
@@ -78,8 +77,8 @@ $(document).ready(function() {
   $("#sensform").validate({
    rules: {
      nant: { required: true, number: true, min: 4, max: 64 },
-     Tsyseta: { required: true, number: true, min: 10, max: 50},
-<!--      eta: { required: true, number: true, min: 0.5, max: 1.0}, -->
+     tsyseta: { required: true, number: true, min: 10, max: 50},
+     eta: { required: true, number: true, min: 0.5, max: 1.0},
      tint: { required: true, number: true, min: 600, max: 36000},
      b: { required: true, number: true, min: 8, max: 856}
    }
@@ -105,7 +104,7 @@ $(document).ready(function() {
 <legend>Simple Sensitivity Calculator (with MeerKAT defaults)</legend>
  <div class="row" style="margin-left: 0px; margin-bottom: 20px;">
   <div class="col-sm-8">
-   <b>Note: </b>This calculator provides a lower bound on the expected noise floor for a given observation. It does not take into account effects such as confusion - for a more complete understanding of sensitivity please use the notebook based calculator available <a href="https://skaafrica.atlassian.net/rest/servicedesk/knowledgebase/latest/articles/view/41091107#SensitivityCalculators-AdvancedSensitivityCalculator" target="_blank">here</a>.
+   <b>Note: </b>This calculator provides a lower bound on the expected noise floor for a given observation. It does not take into account effects such as confusion - for a more complete understanding of sensitivity please consult the additional sensitivity calculation resources available <a href="https://skaafrica.atlassian.net/rest/servicedesk/knowledgebase/latest/articles/view/41091107" target="_blank">here</a>.
   </div>
  </div>
 
@@ -126,29 +125,28 @@ $(document).ready(function() {
   <label class="col-md-5 control-label" for="nant">Diameter</label>  
   <div class="col-md-5">
   <input id="dant" readonly="true" name="dant" type="number" step="any" placeholder="" class="data-input form-control input-md" value="13.5" min="0" required="true">
-  <span class="help-block">Default: 13.5 m</span>  
+  <span class="help-block"></span>  
   </div>
 </div>
 
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-5 control-label" for="Tsyseta">Tsys/eta</label>  
+  <label class="col-md-5 control-label" for="tsyseta">Tsys/eta</label>  
   <div class="col-md-5">
-  <input id="tsyseta" name="Tsyseta" type="number" step="any" placeholder="" class="data-input form-control input-md" value="20" min="0" required="true">
-  <span class="help-block">Default: 20 K</span>  
+  <input id="tsyseta" name="tsyseta" type="number" step="any" placeholder="" class="data-input form-control input-md" value="21" min="0" required="true">
+  <span class="help-block">Default: 21 K</span>  
   </div>
 </div>
 
-<!-- Text input
+<!-- Text input -->
 <div class="form-group">
   <label class="col-md-5 control-label" for="eta">Eta</label>  
   <div class="col-md-5">
-  <input id="eta" name="eta" type="number" step="0.01" placeholder="" class="data-input form-control input-md" value="0.7" min="0" max="1">
-  <span class="help-block">Default: 0.7</span>  
+  <input id="eta" readonly="true" name="eta" type="number" step="0.01" placeholder="" class="data-input form-control input-md" value="0.83" min="0" max="1">
+  <span class="help-block"></span>  
   </div>
  </div>
--->
 
 <!-- Text input-->
 <div class="form-group">
