@@ -1,44 +1,4 @@
-<!--
-NUM_HRS = 8.0    # modify this with your on-source time 
-
-# dont mod below this line
-# ---------------------------
-briggs = np.array([-2, -1.5, -1.0, -0.5, 0, 0.5, 1, 1.5, 2.0])
-synth_beam = np.array([4.35626, 4.80342, 5.87383, 7.65118, 10.911, 17.4973, 33.5949, 44.1468, 45.9398])
-rms2hrs = np.array([24, 22, 15, 7.5, 5, 5, 9, 11, 11])
-mightee_s3_confusion_limit = np.array([0.35,0.35,0.5,0.8,1.7,3.8,8.0,14,15])
-ian_confusion_limit = np.array([8.5, 4.5, 2.9, 2.5, 3, 3.5, 4.9, 5.8, 6])
-confusion_limit = np.min(np.vstack([mightee_s3_confusion_limit,
-                                    ian_confusion_limit]), axis=0)
-
-rms_scaling_factor = np.sqrt(2.0) / np.sqrt(NUM_HRS)
-#rms_sensitivity = np.max(np.vstack([rms2hrs * rms_scaling_factor, 
-#                                    confusion_limit]),
-#                         axis=0)
-rms_sensitivity = np.sqrt((np.vstack([rms2hrs * rms_scaling_factor, 
-                                    confusion_limit])**2).sum(axis=0))
-
-from matplotlib import pyplot as plt
-fig, ax1 = plt.subplots(figsize=(12, 6))
-ax1.plot(briggs, rms_sensitivity, 'bo-', label="Expected worst case after {0:.2f} hrs".format(NUM_HRS))
-ax1.set_xlabel("Briggs")
-ax1.set_title("Confusion+thermal continuum noise after {0:.2f} hrs".format(NUM_HRS))
-ax1.set_ylabel("Confusion+thermal RMS noise ($\mu$Jy/beam)", color='b')
-ax1.tick_params('y', colors='b')
-ax1.grid(True)
-ax1.fill_between(briggs, np.zeros_like(mightee_s3_confusion_limit), confusion_limit, facecolor="gray")
-ax1.text(0.8, 0.5, "COSMOS-adjusted confusion floor",
-         bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.3'))
-ax2 = ax1.twinx()
-plt2 = ax2.plot(briggs, synth_beam, 'ro-', label="Synthesized beam extent".format(NUM_HRS))
-ax2.set_ylabel("Synthesized beam major axis (arcsec)", color='r')
-ax2.tick_params('y', colors='r')
-plt.show()
-
-print("Best estimate for RMS in image: {0:.2f} muJy".format(np.min(rms_sensitivity)))
--->
-
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
   <head>
     <title></title>
@@ -48,9 +8,20 @@ print("Best estimate for RMS in image: {0:.2f} muJy".format(np.min(rms_sensitivi
     <script language="javascript">
         function plot() {
             NUM_HRS=parseFloat(document.getElementsByName("edthrs")[0].value);
+	    NUM_ANTS=parseInt(document.getElementsByName("edtants")[0].value);
+	    AVG_SEFD=parseFloat(document.getElementsByName("edtSEFD")[0].value);
             if (isNaN(NUM_HRS)){
                 window.alert("Invalid value for number of hours");
+		return;
             }
+	    if (isNaN(NUM_ANTS)){
+		window.alert("Invalid value for number of antennae");
+		return;
+	    }
+	    if (isNaN(AVG_SEFD)){
+		window.alert("Invalid value for average SEFD");
+		return;
+	    }
             briggs = [-2, -1.5, -1.0, -0.5, 0, 0.5, 1, 1.5, 2.0]
             mightee_s3_confusion_limit = [0.35,0.35,0.5,0.8,1.7,3.8,8.0,14,15]
             ian_confusion_limit = [8.5, 4.5, 2.9, 2.5, 3, 3.5, 4.9, 5.8, 6]
@@ -61,7 +32,9 @@ print("Best estimate for RMS in image: {0:.2f} muJy".format(np.min(rms_sensitivi
                                         ian_confusion_limit[i]))
             }
             rms2hrs = [24, 22, 15, 7.5, 5, 5, 9, 11, 11]
-            rms_scaling_factor = Math.sqrt(2.0) / Math.sqrt(NUM_HRS)
+            rms_scaling_factor = (Math.sqrt(2.0) / Math.sqrt(NUM_HRS) * 
+		                  Math.sqrt(64.0*63.0/2.0) / Math.sqrt(NUM_ANTS*(NUM_ANTS - 1)/2.0) *
+	                          AVG_SEFD / 400.0)
             rms_sensitivity = []
             for (i = 0; i < rms2hrs.length; ++i) {
                 rms_sensitivity.push(Math.sqrt(Math.pow(rms2hrs[i] * rms_scaling_factor, 2) +
@@ -127,10 +100,10 @@ print("Best estimate for RMS in image: {0:.2f} muJy".format(np.min(rms_sensitivi
     <table style="width:100%">
         <tr>
             <td>
-                <img src="https://www.sarao.ac.za/wp-content/uploads/2019/01/NRF_SARAO_sm1.png"/>
+                <img style="height: 82px;" src="https://www.sarao.ac.za/wp-content/uploads/2019/01/NRF_SARAO_sm1.png"/>
             </td>
             <td style="background-color:#006da3; color:#ffffff; text-align:center">
-                <h1> MeerKAT continuum sensitivity calculator </h1></div>
+                <h1 style="font-family: Arial"> MeerKAT continuum sensitivity calculator </h1></div>
             </td>
         </tr>
     </table>
@@ -139,11 +112,36 @@ print("Best estimate for RMS in image: {0:.2f} muJy".format(np.min(rms_sensitivi
     <form  action="" method="" onkeydown="return event.key != 'Enter';">
         <table style="width:100%">
             <tr>
-            <td style="width:80%">
-                Observation length (hrs)<input type="input" name="edthrs" value="2.0"/>
+            <td style="width:350px;">
+		<table>
+		    <tr>
+		    <td>
+			Observation length (hrs)
+		    </td>
+		    <td>
+			<input type="input" name="edthrs" value="2.0"/>
+		    </td>
+		    </tr>
+		    <tr>
+		    <td>
+		        Number of antennas
+		    </td>
+		    <td>
+			<input type="input" name="edtants" value="60"/>
+		    </td>
+		    </tr>
+		    <tr>
+		    <td>
+		        Average SEFD
+		    </td>
+		    <td>
+			<input type="input" name="edtSEFD" value="400.0"/>
+		    </td>
+		    </tr>
+		</table>
             </td>
-            <td style="text-align:right; width:20%">
-                <button name="btncalc" type="button" onclick="plot();">Calculate</button>
+            <td style="height:100%">
+                <button name="btncalc" type="button" onclick="plot();">Update Plot</button>
             </td>
             </tr>
         </table>
@@ -153,5 +151,20 @@ print("Best estimate for RMS in image: {0:.2f} muJy".format(np.min(rms_sensitivi
     <script language="javascript">
         plot();
     </script>
+  <p><b>Note:</b> This calculator assumes the following </p>
+  <ul>
+	  <li> The longest spacing is included in the array. The confusion noise may be higher depending on final synthesized beam size. </li>
+	  <li> The rolloff edges of the band have been trimmed prior to sensitivity estimation </li>
+	  <li> Core spacings have ~40% of the bandwidth flagged, simulating realistic L-band RFI conditions </li>
+	  <li> 3% residual bandpass errors are included </li>
+	  <li> Residual secondary leakages of 0.1% are included </li>
+	  <li> Calibration errors stemming from a 100mJy/beam dominated field with pointing errors of 200asec are included </li>
+  </ul>
+  <p><b>Important:</b></p>
+  <ul> 
+          <li> Your field may be dominated by direction dependent errors. Please consult existing catalogs, and if necessary, simulate widefield wideband direction dependent errors
+	       due to antenna response attenuation prior to submitting your final choice of catalog and integration times. </li>
+	  <li> You may need to apply uv tapering depending on your science goals. This calculator does not include sensitivity losses due to tapering. </li>
+  <ul>
   </body>
 </html>
