@@ -838,3 +838,128 @@ def gen_input_dump(**kwargs):
             locstring += '{0:19s} = {1:}\n'.format(item, kwargs[item])
     print(locstring)
     return locstring
+
+def genmos(loc_args):
+    return generate_mos(\
+                        rmsbeam  = loc_args['rmssingle'],\
+                        t_int  = loc_args['t_int'],\
+                        Nant  = loc_args['Nant'],\
+                        velocity_width  = loc_args['velocity_width'],\
+                        obs_freq  = loc_args['obs_freq'],\
+                        f_tap  = loc_args['f_tap'],\
+                        rmsrel  = loc_args['rmsrel'],\
+                        sep  = loc_args['sep'],\
+                        tilt  = loc_args['tilt'],\
+                        grid_from_polygon  = loc_args['grid_from_polygon'],\
+                        polypointsra  = loc_args['polypointsra'],\
+                        polypointsdec  = loc_args['polypointsdec'],\
+                        gridtype  = loc_args['gridtype'],\
+                        startpoint  = loc_args['startpoint'],\
+                        border  = loc_args['border'],\
+                        prefix  = loc_args['prefix'],\
+                        RAmin  = loc_args['RAmin'],\
+                        RAmax  = loc_args['RAmax'],\
+                        Demin = loc_args['Demin'],\
+                        Demax  = loc_args['Demax'],\
+                        numin  = loc_args['numin'],\
+                        numax  = loc_args['numax'],\
+                        cdeltxy  = loc_args['cdeltxy'],\
+                        cdeltnu  = loc_args['cdeltnu'],\
+                        ras  = loc_args['ras'],\
+                        decs  = loc_args['decs'],\
+                        names  = loc_args['names'],\
+                        digits  = loc_args['namedigits'],\
+                        clipper  = loc_args['clipper'],\
+                        rmsmapname  = loc_args['rmsmapname'],\
+                        weightmapname  = loc_args['weightmapname'],\
+                        rms_statistics_plot  = loc_args['rms_statistics_plot'],\
+                        pbshape  = loc_args['pbshape'],\
+                        statmax  = loc_args['statmax'],\
+                        summary  = loc_args['summary']\
+    )
+
+def pltmos(loc_args, cmap = 'gray_r', fontsize = 10):
+    return plotmosweight(\
+                         loc_args['hdu'],\
+                         channel = loc_args['mapchannel'],\
+                         rms = loc_args['rms'],\
+                         vmin = loc_args['vmin'],\
+                         vmax = loc_args['vmax'],\
+                         cmap = cmap,\
+                         rmscontours = loc_args['rmscontours'],\
+                         rmscol = 'red',\
+                         ras = loc_args['ras'],\
+                         decs = loc_args['decs'],\
+                         names = loc_args['names'],\
+                         polyra = loc_args['polypointsra'],\
+                         polydec = loc_args['polypointsdec'],\
+                         fontsize = fontsize,\
+                         thaplot = loc_args['pointpos_plot'],\
+                         summary = loc_args['summary'],\
+                         outstring = loc_args['outstring']\
+    )
+
+def prtmospos(loc_args):
+    return printmospos(ras = loc_args['ras'], decs = loc_args['decs'], names = loc_args['names'],\
+                       mosposfile = loc_args['pointpos_ascii'], outstring = '')
+
+def input_dump(loc_args):
+    return gen_input_dump(\
+                          rmssingle = loc_args['rmssingle'],\
+                          t_int = loc_args['t_int'],\
+                          Nant = loc_args['Nant'],\
+                          velocity_width = loc_args['velocity_width'],\
+                          obs_freq = loc_args['obs_freq'],\
+                          f_tap = loc_args['f_tap'],\
+                          dummy1 = '',\
+                          dummy2 = '',\
+                          RAmin = loc_args['RAmin'],\
+                          RAmax = loc_args['RAmax'],\
+                          Demin = loc_args['Demin'],\
+                          Demax = loc_args['Demax'],\
+                          numin = loc_args['numin'],\
+                          numax = loc_args['numax'],\
+                          cdeltxy = loc_args['cdeltxy'],\
+                          cdeltnu = loc_args['cdeltnu'],\
+                          ras = loc_args['ras'],\
+                          decs = loc_args['decs'],\
+                          names = loc_args['names'],\
+                          dummy3 = '',\
+                          dummy4 = '',\
+                          grid_from_polygon = loc_args['grid_from_polygon'],\
+                          polypointsra = loc_args['polypointsra'],\
+                          polypointsdec = loc_args['polypointsdec'],\
+                          sep = loc_args['sep'],\
+                          border = loc_args['border'],\
+                          tilt = loc_args['tilt'],\
+                          gridtype = loc_args['gridtype'],\
+                          startpoint = loc_args['startpoint'],\
+                          prefix = loc_args['prefix'],\
+                          namedigits  = loc_args['namedigits'],\
+                          dummy5 = '',\
+                          dummy6 = '',\
+                          pbshape = loc_args['pbshape'],\
+                          rmsrel = loc_args['rmsrel'],\
+                          weightmapname = loc_args['weightmapname'],\
+                          clipper = loc_args['clipper'],\
+                          rmsmapname = loc_args['rmsmapname'],\
+                          statmax = loc_args['statmax'],\
+                          mapchannel = loc_args['mapchannel'],\
+                          vmin = loc_args['vmin'],\
+                          vmax = loc_args['vmax'],\
+                          rmscontours = loc_args['rmscontours'],\
+                          rms_statistics_plot = loc_args['rms_statistics_plot'],\
+                          pointpos_plot = loc_args['pointpos_plot'],\
+                          pointpos_ascii = loc_args['pointpos_ascii'],\
+                          summary = loc_args['summary'],\
+                          summary_th = loc_args['summary_th'],\
+                          summary_img_width = loc_args['summary_img_width']\
+    )
+
+def totsummary(loc_args):
+    return gensummary(\
+                      summary = loc_args['summary'], summary_th = loc_args['summary_th'], outstring = loc_args['outstring'],\
+                      pointstring = loc_args['pointstring'], pointpos_plot = loc_args['pointpos_plot'], \
+                      rms_statistics_plot = loc_args['rms_statistics_plot'], summary_img_width = loc_args['summary_img_width'],\
+                      input_dump = loc_args['input_dump']\
+    )
