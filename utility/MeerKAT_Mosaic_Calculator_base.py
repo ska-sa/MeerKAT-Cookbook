@@ -9,6 +9,7 @@ from astropy import coordinates
 from astropy import wcs
 from astropy import units
 import os
+from fpdf import FPDF
 
 def getrms(hours = 16, Nant = 60, velocity_width = 5.513, obs_freq = 1.421e9, f_tap = 1., outstring = ''):
 
@@ -803,7 +804,6 @@ def printmospos(ras = [], decs = [], names = [], mosposfile = '', digits = 2, ou
 
 def gensummary(summary = '', summary_th = 11, outstring = '', pointstring = '', pointpos_plot = '',\
                rms_statistics_plot = '', summary_img_width = 120, input_dump = ''):# Generate summary pdf
-    from fpdf import FPDF
     if summary != '':
         pdf = FPDF('P', 'mm', 'A4')
         pdf.add_page()
