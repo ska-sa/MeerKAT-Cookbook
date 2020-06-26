@@ -79,8 +79,8 @@ $(document).ready(function() {
      nant: { required: true, number: true, min: 4, max: 64 },
      tsyseta: { required: true, number: true, min: 10, max: 50},
      eta: { required: true, number: true, min: 0.5, max: 1.0},
-     tint: { required: true, number: true, min: 600, max: 36000},
-     b: { required: true, number: true, min: 8, max: 856}
+     tint: { required: true, number: true, min: 600, max: 86400},
+     b: { required: true, number: true, min: 0.026, max: 856}
    }
   });
 });
@@ -124,7 +124,7 @@ $(document).ready(function() {
 <div class="form-group">
   <label class="col-md-5 control-label" for="nant">Diameter</label>  
   <div class="col-md-5">
-  <input id="dant" readonly="true" name="dant" type="number" step="any" placeholder="" class="data-input form-control input-md" value="13.9" min="0" required="true">
+  <input id="dant" readonly="true" name="dant" type="number" step="any" placeholder="" class="data-input form-control input-md" value="13.5" min="0" required="true">
   <span class="help-block">m</span>  
   </div>
 </div>
@@ -134,8 +134,8 @@ $(document).ready(function() {
 <div class="form-group">
   <label class="col-md-5 control-label" for="tsyseta">Tsys/eta</label>  
   <div class="col-md-5">
-  <input id="tsyseta" name="tsyseta" type="number" step="any" placeholder="" class="data-input form-control input-md" value="21" min="0" required="true">
-  <span class="help-block">Default: 21 K</span>  
+  <input id="tsyseta" name="tsyseta" type="number" step="any" placeholder="" class="data-input form-control input-md" value="22" min="0" required="true">
+  <span class="help-block">Default: 22 K</span>
   </div>
 </div>
 
