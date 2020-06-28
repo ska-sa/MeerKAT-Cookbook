@@ -104,7 +104,7 @@ $(document).ready(function() {
 <legend>Simple Sensitivity Calculator (with MeerKAT defaults)</legend>
  <div class="row" style="margin-left: 0px; margin-bottom: 20px;">
   <div class="col-sm-8">
-   <b>Note: </b>This calculator provides a lower bound on the expected noise floor for a given observation. It does not take into account effects such as confusion - for a more complete understanding of sensitivity please consult the additional sensitivity calculation resources available <a href="https://skaafrica.atlassian.net/servicedesk/customer/portal/1/topic/bc9d6ad2-8321-4e13-a97a-d19d6d019a1c/article/41091107" target="_blank">here</a>.
+   <b>Note:</b> This calculator implements the radiometer equation for MeerKAT parameters. It provides a lower bound on the expected noise floor for a given observation, and does not take into account important imaging-related aspects of sensitivity. It should not be used to estimate realistic observing times. For a more complete consideration of sensitivity please consult the additional sensitivity calculation resources available <a href="https://skaafrica.atlassian.net/servicedesk/customer/portal/1/topic/bc9d6ad2-8321-4e13-a97a-d19d6d019a1c/article/41091107" target="_blank">here</a>.
   </div>
  </div>
 
@@ -242,7 +242,7 @@ $(document).ready(function() {
 </div>
 
 </div></fieldset>
-<legend style='font-size: 14px;'>Based on an original work: Copyright CSIRO 2014 (Keith Bannister <keith.bannister@csiro.au>)
+<legend style='font-size: 14px;'>Based on an original work: Copyright CSIRO 2014 (Keith Bannister - keith.bannister@csiro.au)
 </legend>
 </form>
 
