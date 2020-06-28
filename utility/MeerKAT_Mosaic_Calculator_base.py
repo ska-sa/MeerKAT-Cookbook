@@ -9,6 +9,11 @@ from astropy import coordinates
 from astropy import wcs
 from astropy import units
 import os
+try:
+    from fpdf import FPDF
+except:
+    pass
+    
 
 def getrms(hours = 16, Nant = 60, velocity_width = 5.513, obs_freq = 1.421e9, f_tap = 1., outstring = ''):
 
@@ -479,7 +484,8 @@ def writefitsfile(hdu, filename, overwrite = True):
     """
     Alias to use pyfits to write a hdu
     """
-    hdu.writeto(filename, overwrite = overwrite)
+    if filename != '':
+        hdu.writeto(filename, overwrite = overwrite)
     
 def get_logical_insidemap(omap, verticesx, verticesy):
     """
@@ -694,13 +700,12 @@ def plotmosweight(hduin, channel = 0, rms = None, vmin=0, vmax=1, cmap = 'gray_r
     locstring = ''
     
     pngname = ''
+    thaplot2 = ''
     if summary != '':
         if thaplot == '':
             thaplot = 'pointpos_plot.png'
         pngname = os.path.splitext(thaplot)[0]+'.png'
-        if thaplot == pngname:
-            thaplot2 = ''
-
+    
     # Try it out, read wcs info from input hdu
     wt = wcs.WCS(hduin.header)
     
@@ -789,6 +794,8 @@ def printmospos(ras = [], decs = [], names = [], mosposfile = '', digits = 2, ou
     
     if mosposfile != '':
         output = open(mosposfile, 'w')
+    else:
+        output = False
     if ras != []:
         locstring += 'Pointings:\n'
         for ind in range(len(ras)):
@@ -803,19 +810,32 @@ def printmospos(ras = [], decs = [], names = [], mosposfile = '', digits = 2, ou
                 ourstring = '{0:s} or {1:s} (deg)\n'.format(c.to_string('hmsdms'), c.to_string('decimal'))
                 csvstring = 't{0:02d}, radec target, {1:s}, {2:s}\n'.format(ind, rastr, destr)
             locstring += ourstring
-            output.write(csvstring)
-            
-    output.close()
+            if output:
+                output.write(csvstring)
+    if output:
+        output.close()
     print(locstring)
     locstring += '\n'
     outstring += locstring
     return outstring
 
 def gensummary(summary = '', summary_th = 11, outstring = '', pointstring = '', pointpos_plot = '',\
-               rms_statistics_plot = '', summary_img_width = 120, input_dump = ''):# Generate summary pdf
-    from fpdf import FPDF
+               rms_statistics_plot = '', summary_img_width = 120, input_dump = ''):
+    # Generate summary pdf
     if summary != '':
-        pdf = FPDF('P', 'mm', 'A4')
+        try:
+            pdf = FPDF('P', 'mm', 'A4')
+        except:
+            print('\x1b[1;31m'+'To produce a summary file in pdf format the summary')
+            print('\x1b[1;31m'+'function requires the module fpdf to be installed.')
+            print('\x1b[1;31m'+'This does not work using the online version of this notebook.')
+            print('\x1b[1;31m'+'Download MeerKAT-Cookbook from github and install fpdf via:')
+            print('\x1b[1;31m'+'> pip install fpdf')
+            print('\x1b[1;31m'+'Then try again.'+'\x1b[0m')
+            print('\x1b[1;31m'+'For the online version please use the output funtionalities')
+            print('\x1b[1;31m'+'of the Jupyter notebook.'+'\x1b[0m')
+            return
+            
         pdf.add_page()
         pdf.set_font('Arial', 'B', 18)
         pdf.cell(170, 19, 'MeerKAT Mosaic Calculator summary')
@@ -836,6 +856,7 @@ def gensummary(summary = '', summary_th = 11, outstring = '', pointstring = '', 
         pdf.multi_cell(170, (summary_th+1)*0.352778, input_dump)
         pdf.output(summary, 'F')
         pdf.close()
+        return
 
 def gen_input_dump(**kwargs):
     locstring = 'Input:\n\n'
@@ -850,6 +871,11 @@ def gen_input_dump(**kwargs):
     return locstring
 
 def genmos(loc_args):
+    if loc_args['online'] == True:
+        loc_args['weightmapname'] = ''
+        loc_args['rmsmapname'] = ''
+        loc_args['rms_statistics_plot'] = ''
+
     return generate_mos(\
                         rmsbeam  = loc_args['rmssingle'],\
                         t_int  = loc_args['t_int'],\
@@ -889,6 +915,9 @@ def genmos(loc_args):
     )
 
 def pltmos(loc_args, cmap = 'gray_r', fontsize = 10):
+    if loc_args['online'] == True:
+        loc_args['pointpos_plot'] = ''
+        loc_args['summary'] = ''
     return plotmosweight(\
                          loc_args['hdu'],\
                          channel = loc_args['mapchannel'],\
@@ -910,6 +939,8 @@ def pltmos(loc_args, cmap = 'gray_r', fontsize = 10):
     )
 
 def prtmospos(loc_args):
+    if loc_args['online'] == True:
+        loc_args['pointpos_ascii'] = ''
     return printmospos(ras = loc_args['ras'], decs = loc_args['decs'], names = loc_args['names'],\
                        mosposfile = loc_args['pointpos_ascii'], outstring = '')
 
