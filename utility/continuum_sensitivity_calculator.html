@@ -6,6 +6,11 @@
     <style></style>
     <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
     <script language="javascript">
+
+        // Update the version number below when making changes
+        // that alter the numerical outputs.
+        var version = "1.1"
+
         function plot() {
             NUM_HRS=parseFloat(document.getElementsByName("edthrs")[0].value);
 	    NUM_ANTS=parseInt(document.getElementsByName("edtants")[0].value);
@@ -64,7 +69,7 @@
             };
             
             var layout = {
-                title: 'MeerKAT 64 continuum sensitivity estimation',
+                title: "MeerKAT Continuum Sensitivity Estimation <span style='font-size: 12'>(v" + version + ")</span>",
                 xaxis: {
                     title: 'Robust weighting'
                 },
@@ -153,12 +158,14 @@
     </script>
   <p><b>Note:</b> This calculator assumes the following </p>
   <ul>
+      <li> Declination = - 19 deg. For other declinations, predicted sensitivities and beam shapes will differ. </li>
 	  <li> The longest spacing is included in the array. The confusion noise may be higher depending on final synthesized beam size. </li>
 	  <li> The rolloff edges of the band have been trimmed prior to sensitivity estimation </li>
-	  <li> Core spacings have ~40% of the bandwidth flagged, simulating realistic L-band RFI conditions </li>
+	  <li> Core spacings have ~40% of the bandwidth flagged, which is likely to be a minimum under realistic L-band RFI conditions. </li>
 	  <li> 3% residual bandpass errors are included </li>
 	  <li> Residual secondary leakages of 0.1% are included </li>
 	  <li> Calibration errors stemming from a 100mJy/beam dominated field with pointing errors of 200asec are included </li>
+      <li> In general beams are elliptical; the indicated synthesized beam size is the minor axis. </li>
   </ul>
   <p><b>Important:</b></p>
   <ul> 
