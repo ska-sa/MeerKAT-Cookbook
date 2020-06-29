@@ -62,7 +62,7 @@ def getrms(hours = 16, Nant = 60, velocity_width = 5.513, obs_freq = 1.421e9, f_
     locstring += 'T_sys/eta at {0:3.0f} MHz is {1:2.1f}K\n\n'.format(obs_freq/1e6,Tsys_per_eta)
     rmsnat = 2 * constants.k_B.value * Tsys_per_eta / (A * np.sqrt(Nant * (Nant-1) * bw * tau)) * J / np.sqrt(NPol)
     rmsbeam = f_tap*rmsnat
-    locstring += 'Using the radiometre formula:\n'
+    locstring += 'Using the radiometer formula:\n'
     locstring += '   the natural rms noise for one pointing after {:.1f}h on-source is {:2.4g} mJy/beam over {:.2f} km/s\n'.format(hours, rmsnat*1e3, velocity_width)
     locstring += '   the rms noise when applying a penalty of {:.4g} is {:2.4g} mJy/beam over {:.2f} km/s\n'.format(f_tap, rmsbeam*1e3, velocity_width)
     print('{}'.format(locstring))
