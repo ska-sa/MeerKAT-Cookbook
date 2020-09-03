@@ -205,7 +205,23 @@ def distpointlseg(point, lseg):
     else:
         d = np.sqrt(np.min([np.power(r,2)+np.power(k,2),np.power(o,2)+np.power(l,2)]))
     return d
-                            
+
+def convertosmallsep(rightascensions):
+    """
+    Reduce any separation between two right ascensions to less than 180 deg
+    
+    This is done to remove the ambiguity between a huge mosaic
+    spanning half the sky and what is likely meant.
+
+    """
+    largesep = True
+    while largesep:
+        largesep = False
+        for i in range(-1,len(rightascensions)-1):
+            if rightascensions[i+1]-rightascensions[i] < -180.:
+                rightascensions[i+1] = rightascensions[i+1] + 360.
+                largesep = True
+
 def populategrid(sep, tilt, polypointsra, polypointsdec, gridtype = 'hexagonal', startpoint = None, 
                  border = 0., prefix = 'p'):
     """
@@ -236,12 +252,15 @@ def populategrid(sep, tilt, polypointsra, polypointsdec, gridtype = 'hexagonal',
     
     # Convert it all to deg
     polyra, polydec = returnradecindeg(polypointsra, polypointsdec)
+
+    # Always assume the points not to be separated by more than half the sky
+    convertosmallsep(polyra)
     
     # Convert to pixel coordinates
     # Get centre of pointing
     if type(startpoint) == type(None):
         startpoint = [np.average(np.array(polyra)), np.average(np.array(polydec))]
-        
+    
     # Create a new WCS object, 2 axes
     w = wcs.WCS(naxis=2)
 
@@ -259,8 +278,6 @@ def populategrid(sep, tilt, polypointsra, polypointsdec, gridtype = 'hexagonal',
     polyradec = w.wcs_world2pix(dapoints,0).T.tolist()
     polyra = polyradec[0][:]
     polydec = polyradec[1][:]
-    
-#populategrid(sep, tilt, polypointsra, polypointsdec)
 
     # Convert polygon to sides
     sides = convertosides(polyra, polydec)
@@ -320,6 +337,10 @@ def create_wdh(RAmin, RAmax, Demin, Demax, numin, numax, cdeltxy, cdeltnu = None
     cdeltnu   (float): Frequency voxel size (will be calculated from chann if not provided)
     """
 
+    # Avoid silly numbers in ra
+    while RAmax < RAmin:
+        RAmax += 360.
+    
     # Determine sizes
     npixy = int((Demax-Demin)/cdeltxy) 
     npixx = int((RAmax-RAmin)*np.cos(np.fabs(np.pi*(Demin+Demax)/(2*180.)))/cdeltxy)
@@ -343,7 +364,7 @@ def create_wdh(RAmin, RAmax, Demin, Demax, numin, numax, cdeltxy, cdeltnu = None
     # Set up a sin projection
     w.wcs.cdelt = [-cdeltxy, cdeltxy, cdeltnu]
     w.wcs.crpix = [npixx/2., npixy/2., 1]
-    w.wcs.crval = [(RAmax+RAmin)/2., (Demax+Demin)/2., numin+bandw/(2*npixz)]
+    w.wcs.crval = [np.mod((RAmax+RAmin)/2.,360.), (Demax+Demin)/2., numin+bandw/(2*npixz)]
     w.wcs.ctype = ['RA---SIN', 'DEC--SIN', 'FREQ-OBS']
     w.wcs.cunit = ['deg', 'deg', 'Hz']
     w.wcs.equinox = 2000.
@@ -474,7 +495,8 @@ def invertweightmap(data, clipper = 1., rmsrel = 1.):
 
     basedata = data.copy()/rmsrel
     
-    # Invert and flag for impossible values
+    # Invert and flag for impossible values, avoid error messages
+    basedata[basedata == 0.] = 1./(clipper+1.)
     basedata = 1./basedata
     
     basedata[basedata > clipper] = clipper
@@ -755,6 +777,7 @@ def plotmosweight(hduin, channel = 0, rms = None, vmin=0, vmax=1, cmap = 'gray_r
                 ax.text(ras[i]-0.05, decs[i]+0.05, names[i], transform=ax.get_transform('world'), fontsize=fontsize, color='red')
     if polyra != []:
         polyran, polydecn = returnradecindeg(polyra, polydec)
+        convertosmallsep(polyran)
         
         # Test 2: print coordinates of vertices of polygon
         # from astropy import units as u
@@ -783,7 +806,7 @@ def plotmosweight(hduin, channel = 0, rms = None, vmin=0, vmax=1, cmap = 'gray_r
     if thaplot2 != '':
         fig.savefig(thaplot2)
 
-    return outstring
+    return [outstring,fig,ax]
 
 def printmospos(ras = [], decs = [], names = [], mosposfile = '', digits = 2, outstring = ''):
     """
