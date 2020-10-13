@@ -77,9 +77,6 @@ CASA MeasurementSet data tables can be created using a convenient helper script 
 Measurement sets can be downloaded directly from the MeerKAT archive using some sensible defaults when created.     
 Examples on how to create measurement sets from a user control environment using tokens from the archive are given in example notebooks in the utils folder.
 
-Standard recipes for flagging and calibration are provided in the 
-[casa](https://github.com/ska-sa/MeerKAT-Cookbook/tree/master/casa) folder.
-
 
 ## Notes
 Plotting and planning tools make extensive use of the `matplotlib` and `astropy` python libraries
