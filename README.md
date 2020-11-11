@@ -72,12 +72,6 @@ pip install git+https://github.com/ska-sa/katdal.git
 Care should be taken since installing the master from GitHub might not be as stable as PyPI.
 
 
-## CASA
-CASA MeasurementSet data tables can be created using a convenient helper script `mvftoms.py` available from `katdal` installation.     
-Measurement sets can be downloaded directly from the MeerKAT archive using some sensible defaults when created.     
-Examples on how to create measurement sets from a user control environment using tokens from the archive are given in example notebooks in the utils folder.
-
-
 ## Notes
 Plotting and planning tools make extensive use of the `matplotlib` and `astropy` python libraries
 ```
