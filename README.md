@@ -72,20 +72,4 @@ pip install git+https://github.com/ska-sa/katdal.git
 Care should be taken since installing the master from GitHub might not be as stable as PyPI.
 
 
-## Notes
-Plotting and planning tools make extensive use of the `matplotlib` and `astropy` python libraries
-```
-pip install matplotlib
-pip install astropy
-```
-
-Plotting the antenna location makes use of the `mpl_toolkits.basemap` functionality, which may be a little tricky to install.    
-`Basemap` installation requires `libgeos`. The following worked for the author
-```
-sudo apt-get install libgeos-3.6.2 libgeos-c1v5 libgeos-dev
-git clone https://github.com/matplotlib/basemap.git
-cd basemap/
-pip install .
-```
-
  -fin-
