@@ -3,4 +3,4 @@ numpy==1.16.*
 matplotlib==3.*
 git+https://github.com/ratt-ru/eidos.git
 statsmodels==0.11
-scipy==1.2
+scipy==1.10.0
